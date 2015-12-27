@@ -1,0 +1,75 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "john.hryb.4@gmail.com",
+    "longName": "Styles",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "images/chanceOfRain.png",
+                "name": "IMAGE_W_CHANCE_RAIN",
+                "type": "png"
+            },
+            {
+                "file": "images/chanceOfThunderstorm.png",
+                "name": "IMAGE_W_CHANCE_THUNDERSTORM",
+                "type": "png"
+            },
+            {
+                "file": "images/lightRain.png",
+                "name": "IMAGE_W_LIGHT_RAIN",
+                "type": "png"
+            },
+            {
+                "file": "images/partlyCloudy.png",
+                "name": "IMAGE_W_PARTLY_CLOUDY",
+                "type": "png"
+            },
+            {
+                "file": "images/rain.png",
+                "name": "IMAGE_W_RAIN",
+                "type": "png"
+            },
+            {
+                "file": "images/snow.png",
+                "name": "IMAGE_W_SNOW",
+                "type": "png"
+            },
+            {
+                "file": "images/thunderstorm.png",
+                "name": "IMAGE_W_THUNDERSTORM",
+                "type": "png"
+            },
+            {
+                "file": "images/sunny.png",
+                "name": "IMAGE_W_SUNNY",
+                "type": "png"
+            },
+            {
+                "file": "images/bluetooth-16.png",
+                "name": "IMAGE_BT",
+                "type": "png"
+            },
+            {
+                "file": "images/ui_1.png",
+                "name": "IMAGE_BG1",
+                "type": "png"
+            }
+        ]
+    },
+    "sdkVersion": "3",
+    "shortName": "Styles",
+    "targetPlatforms": [
+        "aplite",
+        "basalt",
+        "chalk"
+    ],
+    "uuid": "511f1451-45ed-4e2d-9726-ea925f2f3836",
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": true
+    }
+}
