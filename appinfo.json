@@ -9,6 +9,12 @@
     "resources": {
         "media": [
             {
+                "file": "images/partlyCloudy.png",
+                "name": "IMAGE_W_PARTLY_CLOUDY",
+                "targetPlatforms": null,
+                "type": "png"
+            },
+            {
                 "file": "images/chanceOfRain.png",
                 "name": "IMAGE_W_CHANCE_RAIN",
                 "type": "png"
@@ -21,11 +27,6 @@
             {
                 "file": "images/lightRain.png",
                 "name": "IMAGE_W_LIGHT_RAIN",
-                "type": "png"
-            },
-            {
-                "file": "images/partlyCloudy.png",
-                "name": "IMAGE_W_PARTLY_CLOUDY",
                 "type": "png"
             },
             {
@@ -56,6 +57,7 @@
             {
                 "file": "images/ui_1.png",
                 "name": "IMAGE_BG1",
+                "targetPlatforms": null,
                 "type": "png"
             }
         ]
