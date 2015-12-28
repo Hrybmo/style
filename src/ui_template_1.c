@@ -20,6 +20,8 @@ static TextLayer *s_textlayer_date;
 static TextLayer *s_textlayer_day;
 static TextLayer *s_textlayer_w_temp;
 static BitmapLayer *s_bitmaplayer_weather;
+static TextLayer *s_textlayer_bot_user;
+static InverterLayer *s_inverterlayer_1;
 
 static void initialise_ui(void) {
   s_window = window_create();
@@ -79,7 +81,7 @@ static void initialise_ui(void) {
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_day);
   
   // s_textlayer_w_temp
-  s_textlayer_w_temp = text_layer_create(GRect(39, 128, 63, 28));
+  s_textlayer_w_temp = text_layer_create(GRect(26, 128, 63, 28));
   text_layer_set_background_color(s_textlayer_w_temp, GColorClear);
   text_layer_set_text(s_textlayer_w_temp, "-10°F");
   text_layer_set_text_alignment(s_textlayer_w_temp, GTextAlignmentCenter);
@@ -87,9 +89,21 @@ static void initialise_ui(void) {
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_w_temp);
   
   // s_bitmaplayer_weather
-  s_bitmaplayer_weather = bitmap_layer_create(GRect(56, 104, 26, 26));
+  s_bitmaplayer_weather = bitmap_layer_create(GRect(91, 130, 26, 26));
   bitmap_layer_set_bitmap(s_bitmaplayer_weather, s_res_image_w_partly_cloudy);
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_bitmaplayer_weather);
+  
+  // s_textlayer_bot_user
+  s_textlayer_bot_user = text_layer_create(GRect(7, 101, 128, 28));
+  text_layer_set_background_color(s_textlayer_bot_user, GColorClear);
+  text_layer_set_text(s_textlayer_bot_user, "John Hryb");
+  text_layer_set_text_alignment(s_textlayer_bot_user, GTextAlignmentCenter);
+  text_layer_set_font(s_textlayer_bot_user, s_res_gothic_28_bold);
+  layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_bot_user);
+  
+  // s_inverterlayer_1
+  s_inverterlayer_1 = inverter_layer_create(GRect(0, 0, 144, 168));
+  layer_add_child(window_get_root_layer(s_window), (Layer *)s_inverterlayer_1);
 }
 
 static void destroy_ui(void) {
@@ -102,6 +116,8 @@ static void destroy_ui(void) {
   text_layer_destroy(s_textlayer_day);
   text_layer_destroy(s_textlayer_w_temp);
   bitmap_layer_destroy(s_bitmaplayer_weather);
+  text_layer_destroy(s_textlayer_bot_user);
+  inverter_layer_destroy(s_inverterlayer_1);
   gbitmap_destroy(s_res_image_bg1);
   gbitmap_destroy(s_res_image_bt);
   gbitmap_destroy(s_res_image_w_partly_cloudy);
