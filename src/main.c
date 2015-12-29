@@ -23,7 +23,7 @@ static char temperature_buffer[8];
 static int uiColor;
 
 //prototypes
-static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed);
+void handle_tick(struct tm* tick_time, TimeUnits units_changed);
 void handle_init(void);
 void handle_deinit(void);
 
@@ -39,23 +39,19 @@ void handle_init(void) {
   static struct tm *current_time;
  
   initialise_ui(); 
-  //CallBack_init();
-  uiColor = CallBack_isInvertUiColor();
+  CallBack_init();
+  //uiColor = CallBack_isInvertUiColor();
   //setup events
-  tick_timer_service_subscribe(MINUTE_UNIT , handle_minute_tick);
+  tick_timer_service_subscribe(SECOND_UNIT , handle_tick);
   //show the ui
   ui_pushStack();
-	//force first event
-	handle_minute_tick(current_time, MINUTE_UNIT);
 }
 
 void handle_deinit(void) {
   destroy_ui();
 }
 //------------------------------------------------------------------------------
-// update time, date, and battery every minute
-static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) {
-  
+void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
   //change color if needed
 	/*
   if(CallBack_isInvertUiColor()){

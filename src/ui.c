@@ -8,9 +8,9 @@ static GFont s_res_bitham_42_bold;
 static GBitmap *s_res_image_bt;
 static GFont s_res_gothic_14;
 static GFont s_res_gothic_18_bold;
-static GFont s_res_gothic_24;
 static GFont s_res_gothic_28_bold;
 static GBitmap *s_res_image_w_partly_cloudy;
+static GFont s_res_gothic_24_bold;
 static BitmapLayer *s_bitmaplayer_bg;
 static TextLayer *s_textlayer_time;
 static BitmapLayer *s_bitmaplayer_BT;
@@ -32,9 +32,9 @@ void initialise_ui(void) {
   s_res_image_bt = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BT);
   s_res_gothic_14 = fonts_get_system_font(FONT_KEY_GOTHIC_14);
   s_res_gothic_18_bold = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
-  s_res_gothic_24 = fonts_get_system_font(FONT_KEY_GOTHIC_24);
   s_res_gothic_28_bold = fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD);
   s_res_image_w_partly_cloudy = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_PARTLY_CLOUDY);
+  s_res_gothic_24_bold = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
   // s_bitmaplayer_bg
   s_bitmaplayer_bg = bitmap_layer_create(GRect(0, 0, 144, 168));
   bitmap_layer_set_bitmap(s_bitmaplayer_bg, s_res_image_bg1);
@@ -75,7 +75,7 @@ void initialise_ui(void) {
   text_layer_set_background_color(s_textlayer_day, GColorClear);
   text_layer_set_text(s_textlayer_day, "Wed");
   text_layer_set_text_alignment(s_textlayer_day, GTextAlignmentCenter);
-  text_layer_set_font(s_textlayer_day, s_res_gothic_24);
+  text_layer_set_font(s_textlayer_day, s_res_gothic_24_bold);
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_day);
   
   // s_textlayer_w_temp
@@ -100,7 +100,7 @@ void initialise_ui(void) {
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_bot_user);
 }
 
- void destroy_ui(void) {
+void destroy_ui(void) {
   window_destroy(s_window);
   bitmap_layer_destroy(s_bitmaplayer_bg);
   text_layer_destroy(s_textlayer_time);

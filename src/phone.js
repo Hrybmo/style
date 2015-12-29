@@ -3,7 +3,6 @@ var Lat = "";
 var Lng = "";
 var inv = "";
 var temp_units = "";
-var zipCode = "";
 var isPersistanceUploaded = 0;
 var apiKey = "df5992f787f04121486cd51dd9de74d9";
 
@@ -45,20 +44,10 @@ function GetStaticWeather()
       var conditions = json.weather[0].main;      
       //console.log("Conditions are " + conditions);
       
-      // high temp
-      var highTemp = json.main.temp_max;
-      //console.log("max temp is " + highTemp);
-      
-      //low temp
-      var lowTemp = json.main.temp_min;
-      //console.log("low temp is " + lowTemp);
-      
       // Assemble dictionary using our keys
       var dictionary = {
         "KEY_TEMPERATURE": temperature,
         "KEY_CONDITIONS": conditions,
-        "KEY_TEMPERATURE_HI": highTemp,
-        "KEY_TEMPERATURE_LO": lowTemp
       };
 
       // Send to Pebble
@@ -78,8 +67,6 @@ function locationSuccess(pos) {
   // Construct URL
 	var temperature = "";
 	var conditions = "";
-	var highTemp = "";
-	var lowTemp = "";
 	var json;
   console.log("getting dynamic weather");
   
@@ -109,19 +96,11 @@ function locationSuccess(pos) {
 					// responseText contains a JSON object with weather info
 					json = JSON.parse(responseText2);
 					//console.log("response temps = " + responseText);
-					// high temp
-					highTemp = json.list[0].temp.max;
-					//console.log("max temp is -.js- " + highTemp);
 
-					//low temp
-					lowTemp = json.list[0].temp.min;
-					//console.log("low temp is " + lowTemp);
-								// Assemble dictionary using our keys
+					// Assemble dictionary using our keys
 					var dictionary = {
 						"KEY_TEMPERATURE": temperature,
 						"KEY_CONDITIONS": conditions,
-						"KEY_TEMPERATURE_HI": highTemp,
-						"KEY_TEMPERATURE_LO": lowTemp
 					};
 
 					// Send to Pebble
@@ -188,8 +167,7 @@ Pebble.addEventListener('appmessage',
      console.log("KEY_WEATHER_MESSAGE = " + e.payload.KEY_WEATHER_MESSAGE);
      if(e.payload.KEY_PERSISTANT_MESSAGE == 1){
        isGps = e.payload.KEY_IS_GPS;
-       console.log("gps = " + isGps);
-       zipCode = e.payload.KEY_ZIP_CODE;
+       //console.log("gps = " + isGps);
        Lat = e.payload.KEY_LATITUDE;
        Lng = e.payload.KEY_LONGITUDE;
        inv = e.payload.KEY_INVERT_UI;
@@ -229,7 +207,6 @@ Pebble.addEventListener("webviewclosed",
     var dictionary = {"KEY_TEMP_UNITS": configuration.tempUnits,
                       "KEY_INVERT_UI": configuration.Background,
                       "KEY_IS_GPS" : configuration.isGPS,
-                      "KEY_ZIP_CODE" : configuration.zip,
                       "KEY_LATITUDE": configuration.latitude,
                       "KEY_LONGITUDE": configuration.longitude};
     
@@ -242,7 +219,6 @@ Pebble.addEventListener("webviewclosed",
       isGps = 0;
     }
     
-    zipCode =  configuration.zip;
     Lat =  configuration.latitude;
     Lng =  configuration.longitude;
     inv =  configuration.Background;
