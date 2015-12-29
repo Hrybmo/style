@@ -1,7 +1,20 @@
 {
-    "appKeys": {},
+    "appKeys": {
+        "KEY_CONDITIONS": 3,
+        "KEY_INVERT_UI": 5,
+        "KEY_IS_GPS": 6,
+        "KEY_JS_READY": 1,
+        "KEY_LATITUDE": 7,
+        "KEY_LONGITUDE": 8,
+        "KEY_PERSISTANT_MESSAGE": 10,
+        "KEY_TEMPERATURE": 2,
+        "KEY_TEMP_UNITS": 4,
+        "KEY_VERSION": 0,
+        "KEY_WEATHER_MESSAGE": 9
+    },
     "capabilities": [
-        ""
+        "location",
+        "configurable"
     ],
     "companyName": "john.hryb.4@gmail.com",
     "longName": "Styles",
@@ -69,7 +82,7 @@
         "basalt",
         "chalk"
     ],
-    "uuid": "511f1451-45ed-4e2d-9726-ea925f2f3836",
+    "uuid": "0712953f-21f5-4a48-9c64-53e3728473df",
     "versionLabel": "1.0",
     "watchapp": {
         "watchface": true
