@@ -1,6 +1,6 @@
 #include "config.h"
 
-void ui_init(void);
+void initialise_ui(void);
 void destroy_ui(void);
 void ui_invert(void);
 void ui_pushStack(void);

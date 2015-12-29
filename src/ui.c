@@ -21,7 +21,7 @@ static TextLayer *s_textlayer_w_temp;
 static BitmapLayer *s_bitmaplayer_weather;
 static TextLayer *s_textlayer_bot_user;
 
-static void initialise_ui(void) {
+void initialise_ui(void) {
   s_window = window_create();
   #ifndef PBL_SDK_3
     window_set_fullscreen(s_window, 1);
@@ -100,7 +100,7 @@ static void initialise_ui(void) {
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_bot_user);
 }
 
-static void destroy_ui(void) {
+ void destroy_ui(void) {
   window_destroy(s_window);
   bitmap_layer_destroy(s_bitmaplayer_bg);
   text_layer_destroy(s_textlayer_time);
@@ -127,7 +127,7 @@ void ui_popStack(void){
 }
 //------------------------------------------------------------------------
 void ui_setTempTo(char *buff){
-  text_layer_set_text(s_textlayer_temp_now, buff);
+  text_layer_set_text(s_textlayer_w_temp, buff);
 }
 //---------------------------------------------------------------------
 void ui_setDayTo(char *buff){
@@ -139,13 +139,17 @@ void ui_setDateTo(char *buff){
 }
 //---------------------------------------------------------------------
 void ui_setTimeTo(char *buff){
-  text_layer_set_text(s_textlayer_hour, buff);
+  text_layer_set_text(s_textlayer_time, buff);
 }
 //------------------------------------------------------------------------
 void ui_setBattTo(char *buff){
   text_layer_set_text(s_textlayer_batt, buff);
 }
-----------------------------------------------------------
+//----------------------------------------------------------
 void ui_setBluetoothTo(bool isBluetooth){
 	//todo show/hide bluetooth bitmap
+}
+//-----------------------------------------------------------------
+void ui_setUserTextTo(char *buff){
+	text_layer_set_text(s_textlayer_bot_user,buff);
 }

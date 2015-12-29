@@ -24,7 +24,8 @@ static int uiColor;
 
 //prototypes
 static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed);
-
+void handle_init(void);
+void handle_deinit(void);
 
 //-------------------------------------------
 int main(void) {
@@ -32,16 +33,16 @@ int main(void) {
   app_event_loop(); //wait until exit
   handle_deinit(); //cleanup
 }
-/-------------------------------------------------
+//-------------------------------------------------
 	
 void handle_init(void) {
   static struct tm *current_time;
  
-  ui_init(); 
-  CallBack_init();
+  initialise_ui(); 
+  //CallBack_init();
   uiColor = CallBack_isInvertUiColor();
   //setup events
-  tick_timer_service_subscribe(MINUTE_UNIT , &handle_minute_tick);
+  tick_timer_service_subscribe(MINUTE_UNIT , handle_minute_tick);
   //show the ui
   ui_pushStack();
 	//force first event
@@ -56,10 +57,11 @@ void handle_deinit(void) {
 static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) {
   
   //change color if needed
+	/*
   if(CallBack_isInvertUiColor()){
 		ui_invert();
   }
-	
+	*/
   //is weather update time?
   if((tick_time->tm_min == 0) && (tick_time->tm_sec == 0)) {
     CallBack_sendWeatherMessage();

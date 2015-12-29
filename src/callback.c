@@ -17,8 +17,7 @@ static int isWeatherDataAvailable = 0;
 static int isGPS = 1;
 static char sLatitude[20] = "1";
 static char sLongitude[20] = "1";
-static char sZipCode[20] = "1";
-static char sVersion[] = "1.2";
+static char sVersion[] = "1";
 static char isFirstWeather = 1;
 //-----------public start--------------------------------
 int CallBack_getTemperature(void)
@@ -81,61 +80,46 @@ void CallBack_sendPersistantMessage(void){
 void CallBack_refreshPersistance(void)
   {
   //set color
-  if (persist_exists(KEY_INVERT_UI))
-    {
-       uiColor = persist_read_int(KEY_INVERT_UI);
+  if (persist_exists(KEY_INVERT_UI)){
+  	uiColor = persist_read_int(KEY_INVERT_UI);
   }
-  else
-  {
+  else{
     persist_write_int(KEY_INVERT_UI,uiColor);
   }
   
   //set temperature units
-  if (persist_exists(KEY_TEMP_UNITS))
-    {
-       temperatureUnits = persist_read_int(KEY_TEMP_UNITS);
+  if (persist_exists(KEY_TEMP_UNITS)){
+  	temperatureUnits = persist_read_int(KEY_TEMP_UNITS);
   }
-  else
-    {
-     persist_write_int(KEY_TEMP_UNITS,temperatureUnits);
+  else{
+    persist_write_int(KEY_TEMP_UNITS,temperatureUnits);
   }
   
-  if (persist_exists(KEY_IS_GPS))
-    {
-       isGPS = persist_read_int(KEY_IS_GPS);
+  if (persist_exists(KEY_IS_GPS)){
+ 	 isGPS = persist_read_int(KEY_IS_GPS);
   }
   else{
       persist_write_int(KEY_IS_GPS,isGPS);
   }
   
-  if (persist_exists(KEY_LATITUDE))
-    {
-      persist_read_string((KEY_LATITUDE),sLatitude,sizeof(sLatitude));
+  if (persist_exists(KEY_LATITUDE)){
+		persist_read_string((KEY_LATITUDE),sLatitude,sizeof(sLatitude));
   }
-  else
-    {
+  else{
     persist_write_string(KEY_LATITUDE,sLatitude);
   }
   
-   if (persist_exists(KEY_LONGITUDE))
-    {
-      persist_read_string((KEY_LONGITUDE),sLongitude,sizeof(sLongitude));
+  if (persist_exists(KEY_LONGITUDE)){
+  	persist_read_string((KEY_LONGITUDE),sLongitude,sizeof(sLongitude));
   }
-  else
-    {
+  else{
     persist_write_string(KEY_LONGITUDE,sLongitude);
   }
-  else
-    {
-    persist_write_string(KEY_ZIP_CODE,sZipCode);
-  }
   
-    if (persist_exists(KEY_VERSION))
-    {
-      persist_read_string((KEY_VERSION),sVersion,sizeof(sVersion));
-  }
-  else
-    {
+	if (persist_exists(KEY_VERSION)){
+		persist_read_string((KEY_VERSION),sVersion,sizeof(sVersion));
+	}
+  else{
     persist_write_string(KEY_VERSION,sVersion);
   }
 }
