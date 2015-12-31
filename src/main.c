@@ -63,53 +63,57 @@ static void data_handler(AccelData *data, uint32_t num_samples) {
 	#define ACCEL_POS_IDLE_TOLERANCE 400
 	#define ACCEL_NEG_IDLE_TOLERANCE -400
 	#define ACCEL_BUFFER_SIZE 30
-	#define ACCEL_NEG_THREASHOLD -600
-	#define ACCEL_POS_THREASHOLD 600
+	#define ACCEL_NEG_THREASHOLD -800
+	#define ACCEL_POS_THREASHOLD 800
 	#define SEQUENCE_ITERATIONS_NEEDED 3
 	static unsigned char bufferIndex = 0;
-	static int xBuffer[ACCEL_BUFFER_SIZE];
-	static int yBuffer[ACCEL_BUFFER_SIZE];
-	static int zBuffer[ACCEL_BUFFER_SIZE];
+	static int xBuffer[ACCEL_BUFFER_SIZE] = {0};
+	static int yBuffer[ACCEL_BUFFER_SIZE] = {0};
+	static int zBuffer[ACCEL_BUFFER_SIZE] = {0};
 	unsigned char searchSequenceTrigger = 0;
 	unsigned char searchSequenceIteration = 0;
 	unsigned char searchIndex = 0;
 	unsigned char sample = 0;
-	unsigned char sampleAmount = num_samples;
 	
 	static const uint32_t segments[] = {200, 200, 200, 200, 200};
 	VibePattern vibrationPattern1 = {
   .durations = segments,
   .num_segments = ARRAY_LENGTH(segments),
 	};
-
-	//APP_LOG(APP_LOG_LEVEL_INFO, "accel sample X= %d Y= %d Z= %d",data[0].x, data[0].y, data[0].z);
 	
+	#if 0
+	static uint8_t accelDebugSequence = 0;
+	if((accelDebugSequence == 3)){
+		APP_LOG(APP_LOG_LEVEL_INFO, "starting accel dump, bufferindex = %d",bufferIndex);
+		for(uint8_t a = 0; a < ACCEL_BUFFER_SIZE; a++){
+			APP_LOG(APP_LOG_LEVEL_INFO, "X= %d Y= %d Z= %d",xBuffer[a], yBuffer[a], zBuffer[a]);
+		}				
+		APP_LOG(APP_LOG_LEVEL_INFO, "accel dump end");								
+	}
+	accelDebugSequence++;	
+	//APP_LOG(APP_LOG_LEVEL_INFO, "accel num_samples= %lu",num_samples);
+	#endif
+
 	//ring buffer time for the data
-	while(sampleAmount--){
-		if(bufferIndex == num_samples){
+	for(uint8_t a = 0; a < num_samples; a++){
+		if(bufferIndex == ACCEL_BUFFER_SIZE){
 			bufferIndex = 0;
 		}
-		xBuffer[bufferIndex] = data[sample].x;
-		yBuffer[bufferIndex] = data[sample].y;
-		zBuffer[bufferIndex] = data[sample].z;
+		//APP_LOG(APP_LOG_LEVEL_INFO, "bufferIndex = %d",bufferIndex);		
+		xBuffer[bufferIndex] = data[a].x;
+		yBuffer[bufferIndex] = data[a].y;
+		zBuffer[bufferIndex] = data[a].z;
 		bufferIndex++;
-		sample++;
 	}
+	
 	//X+ = 1 button to 3 button sides out
 	//Y+ = bottom link to top link
 	//Z+ = coming out of the watch glass
 	
-	//we want to trigger when the following is met
-	//z is negative (upright) others are close to zero
-	//then Y is negative (tilted 90°) others are close to zero
-	// 2 times
-	
-	//APP_LOG(APP_LOG_LEVEL_INFO, "accel service");
-	
 	//look to see if we have a timer trigger
 	for(char a = 0; a < ACCEL_BUFFER_SIZE; a++){
 		//APP_LOG(APP_LOG_LEVEL_INFO, "buffer index = %d",bufferIndex);
-		if(bufferIndex == num_samples){
+		if(bufferIndex == ACCEL_BUFFER_SIZE){
 			bufferIndex = 0;
 		}
 		switch(searchSequenceTrigger){
@@ -142,15 +146,22 @@ static void data_handler(AccelData *data, uint32_t num_samples) {
 		bufferIndex++;
 	}
 	
-	if(searchSequenceIteration > SEQUENCE_ITERATIONS_NEEDED){
+	//clear y logs after trigger - vibration causes false trigger
+	if(searchSequenceIteration >= SEQUENCE_ITERATIONS_NEEDED){
 		if(isTimerMode){
 			vibes_enqueue_custom_pattern(vibrationPattern1);
 			isTimerMode = false;
+			for(uint8_t a = 0; a < ACCEL_BUFFER_SIZE; a++){
+				yBuffer[a] = 0;
+			}
 			//APP_LOG(APP_LOG_LEVEL_INFO, "off");
 		}
 		else{
 			vibes_short_pulse();
 			isTimerMode = true;
+			for(uint8_t a = 0; a < ACCEL_BUFFER_SIZE; a++){
+				yBuffer[a] = 0;
+			}
 			//APP_LOG(APP_LOG_LEVEL_INFO, "on");
 		}
 	}
