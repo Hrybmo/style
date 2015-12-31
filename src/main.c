@@ -15,7 +15,7 @@ of seconds then trigger timer start/stop, 1 vibration for start and 2 for finish
 */
 
 //globals
-static char user_text[] = "-----------";
+static char user_text[] = "SUPER JACK"; //max 11 charictors
 static char time_text[] = "12:12";
 static char day_text[] = "tue";
 static char date_text[] = "12-30-2015";
@@ -63,8 +63,8 @@ static void data_handler(AccelData *data, uint32_t num_samples) {
 	#define ACCEL_POS_IDLE_TOLERANCE 400
 	#define ACCEL_NEG_IDLE_TOLERANCE -400
 	#define ACCEL_BUFFER_SIZE 30
-	#define ACCEL_NEG_THREASHOLD -800
-	#define ACCEL_POS_THREASHOLD 800
+	#define ACCEL_NEG_THREASHOLD -600
+	#define ACCEL_POS_THREASHOLD 600
 	#define SEQUENCE_ITERATIONS_NEEDED 3
 	static unsigned char bufferIndex = 0;
 	static int xBuffer[ACCEL_BUFFER_SIZE] = {0};

@@ -7,10 +7,9 @@ static GBitmap *s_res_image_bg1;
 static GFont s_res_bitham_42_bold;
 static GBitmap *s_res_image_bt;
 static GFont s_res_gothic_14;
-static GFont s_res_gothic_18_bold;
+static GFont s_res_gothic_24_bold;
 static GFont s_res_gothic_28_bold;
 static GBitmap *s_res_image_w_partly_cloudy;
-static GFont s_res_gothic_24_bold;
 static BitmapLayer *s_bitmaplayer_bg;
 static TextLayer *s_textlayer_time;
 static BitmapLayer *s_bitmaplayer_BT;
@@ -24,24 +23,23 @@ static TextLayer *s_textlayer_bot_user;
 void initialise_ui(void) {
   s_window = window_create();
   #ifndef PBL_SDK_3
-    window_set_fullscreen(s_window, 1);
+    window_set_fullscreen(s_window, true);
   #endif
   
   s_res_image_bg1 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BG1);
   s_res_bitham_42_bold = fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD);
   s_res_image_bt = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BT);
   s_res_gothic_14 = fonts_get_system_font(FONT_KEY_GOTHIC_14);
-  s_res_gothic_18_bold = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
+  s_res_gothic_24_bold = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
   s_res_gothic_28_bold = fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD);
   s_res_image_w_partly_cloudy = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_PARTLY_CLOUDY);
-  s_res_gothic_24_bold = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
   // s_bitmaplayer_bg
   s_bitmaplayer_bg = bitmap_layer_create(GRect(0, 0, 144, 168));
   bitmap_layer_set_bitmap(s_bitmaplayer_bg, s_res_image_bg1);
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_bitmaplayer_bg);
   
   // s_textlayer_time
-  s_textlayer_time = text_layer_create(GRect(0, 23, 144, 55));
+  s_textlayer_time = text_layer_create(GRect(0, 21, 144, 55));
   text_layer_set_background_color(s_textlayer_time, GColorClear);
   text_layer_set_text(s_textlayer_time, "12:42");
   text_layer_set_text_alignment(s_textlayer_time, GTextAlignmentCenter);
@@ -63,23 +61,23 @@ void initialise_ui(void) {
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_batt);
   
   // s_textlayer_date
-  s_textlayer_date = text_layer_create(GRect(29, 74, 83, 24));
+  s_textlayer_date = text_layer_create(GRect(0, 62, 144, 28));
   text_layer_set_background_color(s_textlayer_date, GColorClear);
   text_layer_set_text(s_textlayer_date, "01-01-2015");
   text_layer_set_text_alignment(s_textlayer_date, GTextAlignmentCenter);
-  text_layer_set_font(s_textlayer_date, s_res_gothic_18_bold);
+  text_layer_set_font(s_textlayer_date, s_res_gothic_24_bold);
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_date);
   
   // s_textlayer_day
-  s_textlayer_day = text_layer_create(GRect(0, 1, 144, 28));
+  s_textlayer_day = text_layer_create(GRect(0, -2, 144, 28));
   text_layer_set_background_color(s_textlayer_day, GColorClear);
   text_layer_set_text(s_textlayer_day, "Wed");
   text_layer_set_text_alignment(s_textlayer_day, GTextAlignmentCenter);
-  text_layer_set_font(s_textlayer_day, s_res_gothic_24_bold);
+  text_layer_set_font(s_textlayer_day, s_res_gothic_28_bold);
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_day);
   
   // s_textlayer_w_temp
-  s_textlayer_w_temp = text_layer_create(GRect(26, 128, 63, 28));
+  s_textlayer_w_temp = text_layer_create(GRect(34, 130, 63, 28));
   text_layer_set_background_color(s_textlayer_w_temp, GColorClear);
   text_layer_set_text(s_textlayer_w_temp, "-10°F");
   text_layer_set_text_alignment(s_textlayer_w_temp, GTextAlignmentCenter);
@@ -92,7 +90,7 @@ void initialise_ui(void) {
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_bitmaplayer_weather);
   
   // s_textlayer_bot_user
-  s_textlayer_bot_user = text_layer_create(GRect(7, 101, 128, 28));
+  s_textlayer_bot_user = text_layer_create(GRect(0, 98, 144, 28));
   text_layer_set_background_color(s_textlayer_bot_user, GColorClear);
   text_layer_set_text(s_textlayer_bot_user, "John Hryb");
   text_layer_set_text_alignment(s_textlayer_bot_user, GTextAlignmentCenter);
