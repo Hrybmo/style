@@ -1,12 +1,17 @@
 #include <pebble.h>
 #include "ui.h"
 #include "callback.h"
-  
+
 /*
 This module controls all and is responsable for starting and
 shutting down other modules.
 tweak this module after setting up the UI
-- stay on minute ticks, update weather whenever called back.
+-=Functional requirenment specification=-
+- stay on second ticks for quick ui response on change ex. clock 24 to 12
+- suscribe to accelservice, if triggered x amount of times within x amount 
+of seconds then trigger timer start/stop, 1 vibration for start and 2 for finished
+- read from excel peek every minute, if 30 rolling samples are the same (within +/- x then goto sleep)
+- if in sleep accelservice will auto wake
 */
 
 //globals
@@ -21,9 +26,11 @@ static int temperature;
 static int temperatureIncoming;
 static char temperature_buffer[8];
 static int uiColor;
+static bool isTimerMode = false;
 
 //prototypes
 void handle_tick(struct tm* tick_time, TimeUnits units_changed);
+static void data_handler(AccelData *data, uint32_t num_samples);
 void handle_init(void);
 void handle_deinit(void);
 
@@ -36,13 +43,14 @@ int main(void) {
 //-------------------------------------------------
 	
 void handle_init(void) {
-  static struct tm *current_time;
+ const char ACCEL_NUM_SAMPLES = 10; //update every second
  
   initialise_ui(); 
   CallBack_init();
-  //uiColor = CallBack_isInvertUiColor();
   //setup events
   tick_timer_service_subscribe(SECOND_UNIT , handle_tick);
+	accel_data_service_subscribe(ACCEL_NUM_SAMPLES, data_handler);
+	accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
   //show the ui
   ui_pushStack();
 }
@@ -50,14 +58,130 @@ void handle_init(void) {
 void handle_deinit(void) {
   destroy_ui();
 }
+//-----------------------------------------------------------------
+static void data_handler(AccelData *data, uint32_t num_samples) {
+	#define ACCEL_POS_IDLE_TOLERANCE 400
+	#define ACCEL_NEG_IDLE_TOLERANCE -400
+	#define ACCEL_BUFFER_SIZE 30
+	#define ACCEL_NEG_THREASHOLD -600
+	#define ACCEL_POS_THREASHOLD 600
+	#define SEQUENCE_ITERATIONS_NEEDED 3
+	static unsigned char bufferIndex = 0;
+	static int xBuffer[ACCEL_BUFFER_SIZE];
+	static int yBuffer[ACCEL_BUFFER_SIZE];
+	static int zBuffer[ACCEL_BUFFER_SIZE];
+	unsigned char searchSequenceTrigger = 0;
+	unsigned char searchSequenceIteration = 0;
+	unsigned char searchIndex = 0;
+	unsigned char sample = 0;
+	unsigned char sampleAmount = num_samples;
+	
+	static const uint32_t segments[] = {200, 200, 200, 200, 200};
+	VibePattern vibrationPattern1 = {
+  .durations = segments,
+  .num_segments = ARRAY_LENGTH(segments),
+	};
+
+	//APP_LOG(APP_LOG_LEVEL_INFO, "accel sample X= %d Y= %d Z= %d",data[0].x, data[0].y, data[0].z);
+	
+	//ring buffer time for the data
+	while(sampleAmount--){
+		if(bufferIndex == num_samples){
+			bufferIndex = 0;
+		}
+		xBuffer[bufferIndex] = data[sample].x;
+		yBuffer[bufferIndex] = data[sample].y;
+		zBuffer[bufferIndex] = data[sample].z;
+		bufferIndex++;
+		sample++;
+	}
+	//X+ = 1 button to 3 button sides out
+	//Y+ = bottom link to top link
+	//Z+ = coming out of the watch glass
+	
+	//we want to trigger when the following is met
+	//z is negative (upright) others are close to zero
+	//then Y is negative (tilted 90°) others are close to zero
+	// 2 times
+	
+	//APP_LOG(APP_LOG_LEVEL_INFO, "accel service");
+	
+	//look to see if we have a timer trigger
+	for(char a = 0; a < ACCEL_BUFFER_SIZE; a++){
+		//APP_LOG(APP_LOG_LEVEL_INFO, "buffer index = %d",bufferIndex);
+		if(bufferIndex == num_samples){
+			bufferIndex = 0;
+		}
+		switch(searchSequenceTrigger){
+			//z is negative (upright) others are close to zero
+			case 0:{ 
+				if((zBuffer[bufferIndex] < ACCEL_NEG_THREASHOLD) &&
+				   (yBuffer[bufferIndex] < ACCEL_POS_IDLE_TOLERANCE) &&
+					 (yBuffer[bufferIndex] > ACCEL_NEG_IDLE_TOLERANCE) &&
+					 (xBuffer[bufferIndex] < ACCEL_POS_IDLE_TOLERANCE) &&
+					 (xBuffer[bufferIndex] > ACCEL_NEG_IDLE_TOLERANCE)){
+					searchSequenceTrigger++;
+					//APP_LOG(APP_LOG_LEVEL_INFO, "sequence 0 trigger");
+				}
+				break;
+			}
+			//Y is negative (tilted 90°) others are close to zero
+			case 1:{
+				if((yBuffer[bufferIndex] > ACCEL_POS_THREASHOLD) &&
+				   (xBuffer[bufferIndex] < ACCEL_POS_IDLE_TOLERANCE) &&
+					 (xBuffer[bufferIndex] > ACCEL_NEG_IDLE_TOLERANCE) &&
+					 (zBuffer[bufferIndex] < ACCEL_POS_IDLE_TOLERANCE) &&
+					 (zBuffer[bufferIndex] > ACCEL_NEG_IDLE_TOLERANCE)){
+					searchSequenceTrigger = 0;
+					searchSequenceIteration++;
+					//APP_LOG(APP_LOG_LEVEL_INFO, "sequence 1 trigger");
+				}
+				break;
+			}
+		}																							
+		bufferIndex++;
+	}
+	
+	if(searchSequenceIteration > SEQUENCE_ITERATIONS_NEEDED){
+		if(isTimerMode){
+			vibes_enqueue_custom_pattern(vibrationPattern1);
+			isTimerMode = false;
+			//APP_LOG(APP_LOG_LEVEL_INFO, "off");
+		}
+		else{
+			vibes_short_pulse();
+			isTimerMode = true;
+			//APP_LOG(APP_LOG_LEVEL_INFO, "on");
+		}
+	}
+
+}
 //------------------------------------------------------------------------------
 void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
+	static uint16_t secondsTickTimer = 0;
+	static char timerBuffer[] = "00:00:00";
+	uint8_t seconds = 0;
+	uint8_t minutes = 0;
+	uint8_t hours = 0;
   //change color if needed
 	/*
   if(CallBack_isInvertUiColor()){
 		ui_invert();
   }
 	*/
+	if(isTimerMode){
+		seconds = secondsTickTimer % 60;
+		minutes = secondsTickTimer / 60;
+		hours = secondsTickTimer / 3600;
+		snprintf(timerBuffer, sizeof(timerBuffer), "%02d:%02d:%02d", hours, minutes, seconds);
+		secondsTickTimer++;
+		ui_setUserTextTo(timerBuffer);
+	}
+	else{
+		secondsTickTimer = 0;
+		ui_setUserTextTo(user_text);
+	}
+	
   //is weather update time?
   if((tick_time->tm_min == 0) && (tick_time->tm_sec == 0)) {
     CallBack_sendWeatherMessage();
@@ -101,7 +225,6 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 		}
 		ui_setTempTo(temperature_buffer);
 		}
-	ui_setUserTextTo(user_text);
 }
 
 
