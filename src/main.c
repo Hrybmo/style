@@ -14,6 +14,8 @@ of seconds then trigger timer start/stop, 1 vibration for start and 2 for finish
 - if in sleep accelservice will auto wake
 */
 
+#define ACCEL_NUM_SAMPLES 10
+
 //globals
 static char user_text[] = "SUPER JACK"; //max 11 charictors
 static char time_text[] = "12:12";
@@ -27,6 +29,7 @@ static int temperatureIncoming;
 static char temperature_buffer[8];
 static int uiColor;
 static bool isTimerMode = false;
+int16_t accelSleepData;
 
 //prototypes
 void handle_tick(struct tm* tick_time, TimeUnits units_changed);
@@ -43,8 +46,6 @@ int main(void) {
 //-------------------------------------------------
 	
 void handle_init(void) {
- const char ACCEL_NUM_SAMPLES = 10; //update every second
- 
   initialise_ui(); 
   CallBack_init();
   //setup events
@@ -57,6 +58,14 @@ void handle_init(void) {
 
 void handle_deinit(void) {
   destroy_ui();
+}
+//--------------------------------------------------
+//for sleep mode wakeup
+static void tap_handler(AccelAxisType axis, int32_t direction) {
+  tick_timer_service_subscribe(SECOND_UNIT , handle_tick);
+	accel_data_service_subscribe(ACCEL_NUM_SAMPLES, data_handler);
+	accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
+	accel_tap_service_unsubscribe();
 }
 //-----------------------------------------------------------------
 static void data_handler(AccelData *data, uint32_t num_samples) {
@@ -80,6 +89,8 @@ static void data_handler(AccelData *data, uint32_t num_samples) {
   .durations = segments,
   .num_segments = ARRAY_LENGTH(segments),
 	};
+	
+	accelSleepData = zBuffer[0];
 	
 	#if 0
 	static uint8_t accelDebugSequence = 0;
@@ -154,6 +165,7 @@ static void data_handler(AccelData *data, uint32_t num_samples) {
 			for(uint8_t a = 0; a < ACCEL_BUFFER_SIZE; a++){
 				yBuffer[a] = 0;
 			}
+			light_enable_interaction();
 			//APP_LOG(APP_LOG_LEVEL_INFO, "off");
 		}
 		else{
@@ -162,6 +174,7 @@ static void data_handler(AccelData *data, uint32_t num_samples) {
 			for(uint8_t a = 0; a < ACCEL_BUFFER_SIZE; a++){
 				yBuffer[a] = 0;
 			}
+				light_enable_interaction();
 			//APP_LOG(APP_LOG_LEVEL_INFO, "on");
 		}
 	}
@@ -169,17 +182,50 @@ static void data_handler(AccelData *data, uint32_t num_samples) {
 }
 //------------------------------------------------------------------------------
 void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
+	#define SLEEP_MODE_BUFFER_SIZE 30
+	#define SLEEP_MODE_ACCEL_TOLERANCE 5
 	static uint16_t secondsTickTimer = 0;
 	static char timerBuffer[] = "00:00:00";
 	uint8_t seconds = 0;
 	uint8_t minutes = 0;
 	uint8_t hours = 0;
-  //change color if needed
-	/*
-  if(CallBack_isInvertUiColor()){
-		ui_invert();
-  }
-	*/
+	static uint8_t sleepModeBuffer[SLEEP_MODE_BUFFER_SIZE] = {0};
+	static uint8_t sleepModeBufferIndex = 0;
+	int16_t accelMax = -10000;
+	int16_t accelMin = 10000;
+	
+	//sleep mode check
+	if(tick_time->tm_sec == 0){
+		if(sleepModeBufferIndex == SLEEP_MODE_BUFFER_SIZE){
+			sleepModeBufferIndex = 0;
+		}
+		sleepModeBuffer[sleepModeBufferIndex] = accelSleepData;
+		sleepModeBufferIndex++;
+		
+		//check array for min max
+		for(uint8_t a = 0; a < SLEEP_MODE_BUFFER_SIZE; a++){
+			if(accelMin > sleepModeBuffer[a]){
+				accelMin = sleepModeBuffer[a];
+			}
+			if(accelMax < sleepModeBuffer[a]){
+				accelMax = sleepModeBuffer[a];
+			}
+		}
+		if ((accelMax - accelMin) < SLEEP_MODE_ACCEL_TOLERANCE){
+			//activate sleep mode
+			accel_tap_service_subscribe(tap_handler);
+			accel_data_service_unsubscribe();
+			tick_timer_service_unsubscribe();
+			ui_setUserTextTo("sleep");
+			ui_setTimeTo("");
+			ui_setDayTo("");
+			ui_setDateTo("");
+			ui_setTempTo("");
+			return;
+		}
+	}
+	
+	//stopwatch mode check
 	if(isTimerMode){
 		seconds = secondsTickTimer % 60;
 		minutes = secondsTickTimer / 60;
