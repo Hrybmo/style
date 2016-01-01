@@ -81,8 +81,6 @@ static void data_handler(AccelData *data, uint32_t num_samples) {
 	static int zBuffer[ACCEL_BUFFER_SIZE] = {0};
 	unsigned char searchSequenceTrigger = 0;
 	unsigned char searchSequenceIteration = 0;
-	unsigned char searchIndex = 0;
-	unsigned char sample = 0;
 	
 	static const uint32_t segments[] = {200, 200, 200, 200, 200};
 	VibePattern vibrationPattern1 = {
@@ -183,16 +181,16 @@ static void data_handler(AccelData *data, uint32_t num_samples) {
 //------------------------------------------------------------------------------
 void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 	#define SLEEP_MODE_BUFFER_SIZE 30
-	#define SLEEP_MODE_ACCEL_TOLERANCE 5
+	#define SLEEP_MODE_ACCEL_TOLERANCE 50
 	static uint16_t secondsTickTimer = 0;
 	static char timerBuffer[] = "00:00:00";
 	uint8_t seconds = 0;
 	uint8_t minutes = 0;
 	uint8_t hours = 0;
-	static uint8_t sleepModeBuffer[SLEEP_MODE_BUFFER_SIZE] = {0};
+	static int sleepModeBuffer[SLEEP_MODE_BUFFER_SIZE] = {0,-100,100};
 	static uint8_t sleepModeBufferIndex = 0;
-	int16_t accelMax = -10000;
-	int16_t accelMin = 10000;
+	int accelMax = -10000;
+	int accelMin = 10000;
 	
 	//sleep mode check
 	if(tick_time->tm_sec == 0){
@@ -211,15 +209,23 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 				accelMax = sleepModeBuffer[a];
 			}
 		}
+		
+		#if 0
+		for(uint8_t a = 0; a < SLEEP_MODE_BUFFER_SIZE; a++){
+			APP_LOG(APP_LOG_LEVEL_INFO, "sleep buffer[%d] = %d",a,sleepModeBuffer[a]);
+		}
+		APP_LOG(APP_LOG_LEVEL_INFO, "MIN = %d MAX = %d",accelMin,accelMax);
+		#endif
+		
 		if ((accelMax - accelMin) < SLEEP_MODE_ACCEL_TOLERANCE){
 			//activate sleep mode
 			accel_tap_service_subscribe(tap_handler);
 			accel_data_service_unsubscribe();
 			tick_timer_service_unsubscribe();
-			ui_setUserTextTo("sleep");
-			ui_setTimeTo("");
+			ui_setUserTextTo("");
+			ui_setTimeTo("-- --");
 			ui_setDayTo("");
-			ui_setDateTo("");
+			ui_setDateTo("<>");
 			ui_setTempTo("");
 			return;
 		}
