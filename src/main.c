@@ -69,9 +69,9 @@ static void tap_handler(AccelAxisType axis, int32_t direction) {
 }
 //-----------------------------------------------------------------
 static void data_handler(AccelData *data, uint32_t num_samples) {
-	#define ACCEL_POS_IDLE_TOLERANCE 400
-	#define ACCEL_NEG_IDLE_TOLERANCE -400
-	#define ACCEL_BUFFER_SIZE 30
+	#define ACCEL_POS_IDLE_TOLERANCE 500
+	#define ACCEL_NEG_IDLE_TOLERANCE -500
+	#define ACCEL_BUFFER_SIZE 20
 	#define ACCEL_NEG_THREASHOLD -600
 	#define ACCEL_POS_THREASHOLD 600
 	#define SEQUENCE_ITERATIONS_NEEDED 3

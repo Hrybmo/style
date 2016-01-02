@@ -22,45 +22,52 @@
     "resources": {
         "media": [
             {
-                "file": "images/partlyCloudy.png",
-                "name": "IMAGE_W_PARTLY_CLOUDY",
+                "file": "images/50.bmp",
+                "name": "IMAGE_50",
                 "targetPlatforms": null,
-                "type": "png"
+                "type": "bitmap"
             },
             {
-                "file": "images/chanceOfRain.png",
-                "name": "IMAGE_W_CHANCE_RAIN",
-                "type": "png"
+                "file": "images/13.bmp",
+                "name": "IMAGE_13",
+                "targetPlatforms": null,
+                "type": "bitmap"
             },
             {
-                "file": "images/chanceOfThunderstorm.png",
-                "name": "IMAGE_W_CHANCE_THUNDERSTORM",
-                "type": "png"
+                "file": "images/11.bmp",
+                "name": "IMAGE_11",
+                "targetPlatforms": null,
+                "type": "bitmap"
             },
             {
-                "file": "images/lightRain.png",
-                "name": "IMAGE_W_LIGHT_RAIN",
-                "type": "png"
+                "file": "images/10.bmp",
+                "name": "IMAGE_10",
+                "targetPlatforms": null,
+                "type": "bitmap"
             },
             {
-                "file": "images/rain.png",
-                "name": "IMAGE_W_RAIN",
-                "type": "png"
+                "file": "images/09.bmp",
+                "name": "IMAGE_09",
+                "targetPlatforms": null,
+                "type": "bitmap"
             },
             {
-                "file": "images/snow.png",
-                "name": "IMAGE_W_SNOW",
-                "type": "png"
+                "file": "images/03_04.bmp",
+                "name": "IMAGE_03_04",
+                "targetPlatforms": null,
+                "type": "bitmap"
             },
             {
-                "file": "images/thunderstorm.png",
-                "name": "IMAGE_W_THUNDERSTORM",
-                "type": "png"
+                "file": "images/02.bmp",
+                "name": "IMAGE_02",
+                "targetPlatforms": null,
+                "type": "bitmap"
             },
             {
-                "file": "images/sunny.png",
-                "name": "IMAGE_W_SUNNY",
-                "type": "png"
+                "file": "images/01.bmp",
+                "name": "IMAGE_01",
+                "targetPlatforms": null,
+                "type": "bitmap"
             },
             {
                 "file": "images/bluetooth-16.png",
