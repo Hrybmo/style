@@ -3,7 +3,7 @@
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 </head>
-  
+<body>  
 <h1 style="text-decoration: underline;">STYLES config</h1>
 
 <p>Temperature select:
@@ -29,14 +29,14 @@
 <p id="longitude">Longitude:</p>
 </div>
   
-<p>Background color select:
-<select id="Background_select">
-<option value="w">white</option>
-<option value="b">black</option>
-</select>
+<p>Custom text to display:
+<input type = "text" id = "customText" value = "" maxlength="13">
 </p>
 
-<p>Please make a donation if you can for new developments.
+<p>
+Please make a donation if you can for...<br>
+- New developments and support.<br>
+- Help funding a pebble time steel for smart strap development<br>
 Thanks! 
 <p>
 <img src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/pp-acceptance-small.png" alt="Buy now with PayPal" />
@@ -50,11 +50,11 @@ Thanks!
 var sLatitude = "";
 var sLongitude = "";
 var tempSelect = document.getElementById("temp_select");
-var BackgroundSelect = document.getElementById("Background_select");
 var isGPS = document.getElementById("weatherSource");
 var latitude = document.getElementById('latitude');
 var longitude = document.getElementById('longitude');
 var zip = document.getElementById('zip');
+var userText = document.getElementById("customText").value;
   
 $(".noGPSclass").hide();
 $(document).ready(function(){
@@ -62,18 +62,17 @@ $(document).ready(function(){
     if(localStorage['tempUnits']) {
 	
 	  tempSelect.value = localStorage['tempUnits'];
-      BackgroundSelect.value = localStorage['Background'];
       isGPS.value = localStorage['isGPS'];
       latitude.innerHTML = localStorage['latitude'];
       longitude.innerHTML = localStorage['longitude'];
       zip.value = localStorage['zip'];
+	  userText.value = localStorage['userText'];
 	  
 	  if ($('#weatherSource>option:selected').text() === "No GPS"){
 		 $(".noGPSclass").fadeIn();
 	  }
-      
     }
-	})
+})
   //----------------------------------------
   $("#zip_button").click(function(){
     //console.log("zip button clicked");
@@ -105,31 +104,31 @@ $(document).ready(function(){
   
   var options = {
       "tempUnits": 0,
-      "Background": 0,
       "isGPS": 0,
       "latitude": "",
       "longitude": "",
-      "zip": ""
+      "zip": "",
+	  "userText": ""
     };
   
   //Setup to allow easy adding more options later
   function saveOptions() {
     options = {
       "tempUnits": tempSelect.options[tempSelect.selectedIndex].value,
-      "Background": BackgroundSelect.options[BackgroundSelect.selectedIndex].value,
       "isGPS": isGPS.options[isGPS.selectedIndex].value,
       "latitude": latitude.innerHTML,
       "longitude": longitude.innerHTML,
-      "zip": zip.value
+      "zip": zip.value,
+	  "userText": userText.innerHTML
     }
 	
 	// Save for next launch
     localStorage['tempUnits'] = options['tempUnits'];
-    localStorage['Background'] = options['Background'];
 	localStorage['isGPS'] = options['isGPS'];
     localStorage['latitude'] = options['latitude'];
 	localStorage['longitude'] = options['longitude'];
     localStorage['zip'] = options['zip'];
+	localStorage['userText'] = options['userText'];
     return options;
   };
   
