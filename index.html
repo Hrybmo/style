@@ -54,7 +54,7 @@ var isGPS = document.getElementById("weatherSource");
 var latitude = document.getElementById('latitude');
 var longitude = document.getElementById('longitude');
 var zip = document.getElementById('zip');
-var userText = document.getElementById("customText").value;
+var userText = document.getElementById("customText");
   
 $(".noGPSclass").hide();
 $(document).ready(function(){
@@ -117,7 +117,7 @@ $(document).ready(function(){
       "isGPS": isGPS.options[isGPS.selectedIndex].value,
       "latitude": latitude.innerHTML,
       "longitude": longitude.innerHTML,
-      "userText": userText.innerHTML
+      "userText": userText.value
     }
 	
 	// Save for next launch
@@ -127,6 +127,7 @@ $(document).ready(function(){
 	localStorage['longitude'] = options['longitude'];
     localStorage['zip'] = options['zip'];
 	localStorage['userText'] = options['userText'];
+	console.log("userText = %s",userText.value);
     return options;
   };
   
