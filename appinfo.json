@@ -1,7 +1,6 @@
 {
     "appKeys": {
         "KEY_CONDITIONS": 3,
-        "KEY_INVERT_UI": 5,
         "KEY_IS_GPS": 6,
         "KEY_JS_READY": 1,
         "KEY_LATITUDE": 7,
@@ -9,6 +8,7 @@
         "KEY_PERSISTANT_MESSAGE": 10,
         "KEY_TEMPERATURE": 2,
         "KEY_TEMP_UNITS": 4,
+        "KEY_USER_TEXT": 5,
         "KEY_VERSION": 0,
         "KEY_WEATHER_MESSAGE": 9
     },
@@ -22,56 +22,57 @@
     "resources": {
         "media": [
             {
-                "file": "images/50.bmp",
+                "file": "images/50.png",
                 "name": "IMAGE_50",
                 "targetPlatforms": null,
-                "type": "bitmap"
+                "type": "png"
             },
             {
-                "file": "images/13.bmp",
+                "file": "images/13.png",
                 "name": "IMAGE_13",
                 "targetPlatforms": null,
-                "type": "bitmap"
+                "type": "png"
             },
             {
-                "file": "images/11.bmp",
+                "file": "images/11.png",
                 "name": "IMAGE_11",
                 "targetPlatforms": null,
-                "type": "bitmap"
+                "type": "png"
             },
             {
-                "file": "images/10.bmp",
+                "file": "images/10.png",
                 "name": "IMAGE_10",
                 "targetPlatforms": null,
-                "type": "bitmap"
+                "type": "png"
             },
             {
-                "file": "images/09.bmp",
+                "file": "images/09.png",
                 "name": "IMAGE_09",
                 "targetPlatforms": null,
-                "type": "bitmap"
+                "type": "png"
             },
             {
-                "file": "images/03_04.bmp",
+                "file": "images/03_04.png",
                 "name": "IMAGE_03_04",
                 "targetPlatforms": null,
-                "type": "bitmap"
+                "type": "png"
             },
             {
-                "file": "images/02.bmp",
+                "file": "images/02.png",
                 "name": "IMAGE_02",
                 "targetPlatforms": null,
-                "type": "bitmap"
-            },
-            {
-                "file": "images/01.bmp",
-                "name": "IMAGE_01",
-                "targetPlatforms": null,
-                "type": "bitmap"
+                "type": "png"
             },
             {
                 "file": "images/bluetooth-16.png",
                 "name": "IMAGE_BT",
+                "targetPlatforms": null,
+                "type": "png-trans"
+            },
+            {
+                "file": "images/01.png",
+                "name": "IMAGE_01",
+                "targetPlatforms": null,
                 "type": "png"
             },
             {

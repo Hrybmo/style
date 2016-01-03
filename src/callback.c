@@ -12,42 +12,36 @@ static int temperatureUnits = 'F';
 static int temperature = 0;
 static int temperature_hi = 0;
 static int temperature_lo = 0;
-static int uiColor = 0;
 static int isWeatherDataAvailable = 0;
 static int isGPS = 1;
 static char sLatitude[20] = "1";
 static char sLongitude[20] = "1";
 static char sVersion[] = "1";
 static char isFirstWeather = 1;
+static char user_text[20] = {""};
 //-----------public start--------------------------------
-int CallBack_getTemperature(void)
-  {
+int CallBack_getTemperature(void){
   return temperature;
 }
 
-int CallBack_getTemperatureHigh(void)
-  {
+int CallBack_getTemperatureHigh(void){
   return temperature_hi;
 }
 
-int CallBack_getTemperatureLow(void)
-  {
+int CallBack_getTemperatureLow(void){
   return temperature_lo;
 }
 
-int CallBack_getTemperatureUnits(void)
-  {
+int CallBack_getTemperatureUnits(void){
   return temperatureUnits;
 }
 
-int CallBack_isWeatherDataAvailable(void)
-  {
+int CallBack_isWeatherDataAvailable(void){
   return isWeatherDataAvailable;
 }
 
-int CallBack_isInvertUiColor(void)
-  {
-  return uiColor;
+void *CallBack_getUserTextPtr(void){
+	return user_text;
 }
 
 //----------------------------------------------
@@ -71,7 +65,6 @@ void CallBack_sendPersistantMessage(void){
     dict_write_uint32(iter, KEY_IS_GPS, isGPS);
     dict_write_cstring(iter, KEY_LATITUDE, sLatitude);
     dict_write_cstring(iter, KEY_LONGITUDE, sLongitude);
-    dict_write_uint32(iter, KEY_INVERT_UI, uiColor);
     dict_write_end(iter);
     // Send the message!
     app_message_outbox_send();
@@ -79,20 +72,19 @@ void CallBack_sendPersistantMessage(void){
 //------------------------------------------------
 void CallBack_refreshPersistance(void)
   {
-  //set color
-  if (persist_exists(KEY_INVERT_UI)){
-  	uiColor = persist_read_int(KEY_INVERT_UI);
-  }
-  else{
-    persist_write_int(KEY_INVERT_UI,uiColor);
-  }
-  
   //set temperature units
   if (persist_exists(KEY_TEMP_UNITS)){
   	temperatureUnits = persist_read_int(KEY_TEMP_UNITS);
   }
   else{
     persist_write_int(KEY_TEMP_UNITS,temperatureUnits);
+  }
+	
+	 if (persist_exists(KEY_USER_TEXT)){
+		persist_read_string((KEY_USER_TEXT),user_text,sizeof(user_text));
+  }
+  else{
+		 persist_write_string(KEY_USER_TEXT,user_text);
   }
   
   if (persist_exists(KEY_IS_GPS)){
@@ -140,15 +132,15 @@ void CallBack_init(void)
 
 //----------------private start----------------------
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
-  APP_LOG(APP_LOG_LEVEL_ERROR, "Message dropped!");
+  //APP_LOG(APP_LOG_LEVEL_ERROR, "Message dropped!");
 }
 
 static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResult reason, void *context) {
-  APP_LOG(APP_LOG_LEVEL_ERROR, "Outbox send failed!");
+  //APP_LOG(APP_LOG_LEVEL_ERROR, "Outbox send failed!");
 }
 
 static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
-  APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success!");
+  //APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success!");
   if(isFirstWeather)
     {
     isFirstWeather = 0;
@@ -192,19 +184,6 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
        }
       break;
       
-      case KEY_INVERT_UI:
-        memcpy(incomming,(t->value->cstring),sizeof(incomming));
-        if(strcmp(incomming,"b") == 0)
-        {
-         persist_write_int(KEY_INVERT_UI,1);
-         uiColor = 1;
-        }
-        else{
-           persist_write_int(KEY_INVERT_UI,0);
-           uiColor = 0;
-        }
-      break;
-      
       case KEY_IS_GPS:
       memcpy(incomming,(t->value->cstring),sizeof(incomming));
       if(strcmp(incomming,"GPS") == 0){
@@ -228,6 +207,11 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
       case KEY_LONGITUDE:
       memcpy(sLongitude,(t->value->cstring),(t->length));
       persist_write_string(KEY_LONGITUDE,sLongitude);
+      break;
+			
+			case KEY_USER_TEXT:
+      memcpy(user_text,(t->value->cstring),(t->length));
+      persist_write_string(KEY_USER_TEXT,user_text);
       break;
 
       case KEY_JS_READY:

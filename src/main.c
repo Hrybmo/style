@@ -17,17 +17,17 @@ of seconds then trigger timer start/stop, 1 vibration for start and 2 for finish
 #define ACCEL_NUM_SAMPLES 10
 
 //globals
-static char user_text[] = "SUPER JACK"; //max 11 charictors
+//static char user_text[] = "SUPER JACK"; //max 11 charictors
 static char time_text[] = "12:12";
 static char day_text[] = "tue";
 static char date_text[] = "12-30-2015";
 static char batt_text[] = "100";
+static char *userTextPtr = 0;
 static BatteryChargeState charge_state;
 static int temperatureUnits;
 static int temperature;
 static int temperatureIncoming;
 static char temperature_buffer[8];
-static int uiColor;
 static bool isTimerMode = false;
 int16_t accelSleepData;
 
@@ -48,6 +48,7 @@ int main(void) {
 void handle_init(void) {
   initialise_ui(); 
   CallBack_init();
+	userTextPtr = CallBack_getUserTextPtr();
   //setup events
   tick_timer_service_subscribe(SECOND_UNIT , handle_tick);
 	accel_data_service_subscribe(ACCEL_NUM_SAMPLES, data_handler);
@@ -72,8 +73,8 @@ static void data_handler(AccelData *data, uint32_t num_samples) {
 	#define ACCEL_POS_IDLE_TOLERANCE 500
 	#define ACCEL_NEG_IDLE_TOLERANCE -500
 	#define ACCEL_BUFFER_SIZE 20
-	#define ACCEL_NEG_THREASHOLD -600
-	#define ACCEL_POS_THREASHOLD 600
+	#define ACCEL_NEG_THREASHOLD -500
+	#define ACCEL_POS_THREASHOLD 500
 	#define SEQUENCE_ITERATIONS_NEEDED 3
 	static unsigned char bufferIndex = 0;
 	static int xBuffer[ACCEL_BUFFER_SIZE] = {0};
@@ -242,7 +243,7 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 	}
 	else{
 		secondsTickTimer = 0;
-		ui_setUserTextTo(user_text);
+		ui_setUserTextTo(userTextPtr);
 	}
 	
   //is weather update time?
@@ -256,6 +257,10 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 	} 
 	else{
     strftime(time_text, sizeof(time_text), "%I:%M", tick_time);
+		//if there is a zero first then remove it
+		if(!(memcmp(time_text,"0",1))){ 
+			memcpy(time_text,(time_text + 1),sizeof(time_text)-1);
+		}
   }
 	ui_setTimeTo(time_text);
 	
@@ -286,6 +291,7 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 			temperature = (temperatureIncoming - 273.15);
 			snprintf(temperature_buffer, sizeof(temperature_buffer), "%d°C", temperature);
 		}
+		
 		ui_setTempTo(temperature_buffer);
 		}
 }
