@@ -19,17 +19,10 @@ static char sLongitude[20] = "1";
 static char sVersion[] = "1";
 static char isFirstWeather = 1;
 static char user_text[20] = {""};
+static uint8_t conditions = 1;
 //-----------public start--------------------------------
 int CallBack_getTemperature(void){
   return temperature;
-}
-
-int CallBack_getTemperatureHigh(void){
-  return temperature_hi;
-}
-
-int CallBack_getTemperatureLow(void){
-  return temperature_lo;
 }
 
 int CallBack_getTemperatureUnits(void){
@@ -39,6 +32,11 @@ int CallBack_getTemperatureUnits(void){
 int CallBack_isWeatherDataAvailable(void){
   return isWeatherDataAvailable;
 }
+
+uint8_t CallBack_getConditions(void){
+  return conditions;
+}
+
 
 void *CallBack_getUserTextPtr(void){
 	return user_text;
@@ -151,7 +149,7 @@ static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
 //----------------------------------------------------------------
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   
-  char incomming[10];
+  char incomming[20];
   
   // Read first item
   Tuple *t = dict_read_first(iterator);
@@ -168,7 +166,32 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
       break;
       
     case KEY_CONDITIONS:
-      //snprintf(conditions_buffer, sizeof(conditions_buffer), "%s", t->value->cstring);
+      snprintf(incomming, sizeof(incomming), "%s", t->value->cstring);
+			if(memcmp("01",incomming,3) == 0){
+				conditions = 1;
+			}
+			else if(memcmp("02",incomming,3) == 0){
+				conditions = 2;
+			}
+			else if(memcmp("03",incomming,3) == 0){
+				conditions = 3;
+			}
+			else if(memcmp("04",incomming,3) == 0){
+				conditions = 4;
+			}
+			else if(memcmp("09",incomming,3) == 0){
+				conditions = 9;
+			}
+			else if(memcmp("10",incomming,3) == 0){
+				conditions = 10;
+			}
+			else if(memcmp("13",incomming,3) == 0){
+				conditions = 13;
+			}
+			else if(memcmp("50",incomming,3) == 0){
+				conditions = 50;
+			}
+			//APP_LOG(APP_LOG_LEVEL_INFO, "conditions - callback = %d",conditions);
       break;
 
     case KEY_TEMP_UNITS:        

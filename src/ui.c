@@ -15,7 +15,7 @@ static TextLayer *s_textlayer_batt;
 static TextLayer *s_textlayer_date;
 static TextLayer *s_textlayer_day;
 static TextLayer *s_textlayer_w_temp;
-static BitmapLayer *s_bitmaplayer_weather;
+static BitmapLayer *s_bitmaplayer_weather_01;
 static TextLayer *s_textlayer_bot_user;
 
 void initialise_ui(void) {
@@ -73,10 +73,10 @@ void initialise_ui(void) {
   text_layer_set_font(s_textlayer_w_temp, s_res_gothic_28_bold);
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_w_temp);
   
-  // s_bitmaplayer_weather
-  s_bitmaplayer_weather = bitmap_layer_create(GRect(91, 130, 26, 26));
-  bitmap_layer_set_bitmap(s_bitmaplayer_weather, s_res_image_01);
-  layer_add_child(window_get_root_layer(s_window), (Layer *)s_bitmaplayer_weather);
+  // s_bitmaplayer_weather_01
+  s_bitmaplayer_weather_01 = bitmap_layer_create(GRect(91, 130, 26, 26));
+  bitmap_layer_set_bitmap(s_bitmaplayer_weather_01, s_res_image_01);
+  layer_add_child(window_get_root_layer(s_window), (Layer *)s_bitmaplayer_weather_01);
   
   // s_textlayer_bot_user
   s_textlayer_bot_user = text_layer_create(GRect(0, 98, 144, 35));
@@ -95,7 +95,7 @@ void destroy_ui(void) {
   text_layer_destroy(s_textlayer_date);
   text_layer_destroy(s_textlayer_day);
   text_layer_destroy(s_textlayer_w_temp);
-  bitmap_layer_destroy(s_bitmaplayer_weather);
+  bitmap_layer_destroy(s_bitmaplayer_weather_01);
   text_layer_destroy(s_textlayer_bot_user);
   gbitmap_destroy(s_res_image_bg1);
   gbitmap_destroy(s_res_image_01);
@@ -130,11 +130,36 @@ void ui_setTimeTo(char *buff){
 void ui_setBattTo(char *buff){
   text_layer_set_text(s_textlayer_batt, buff);
 }
-//----------------------------------------------------------
-void ui_setBluetoothTo(bool isBluetooth){
-	//todo show/hide bluetooth bitmap
-}
 //-----------------------------------------------------------------
 void ui_setUserTextTo(char *buff){
 	text_layer_set_text(s_textlayer_bot_user,buff);
+}
+
+void ui_setWeatherTo(uint8_t id){
+	switch (id){
+		case 1:
+			s_res_image_01 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_01);
+			break;
+		case 2:
+			s_res_image_01 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_02);
+			break;
+		case 3: case 4:
+			s_res_image_01 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_03_04);
+			break;
+		case 9:
+			s_res_image_01 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_09);
+			break;
+		case 10:
+			s_res_image_01 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_10);
+			break;
+		case 11:
+			s_res_image_01 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_11);
+			break;
+		case 13:
+			s_res_image_01 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_13);
+			break;
+		case 50:
+			s_res_image_01 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_50);
+			break;
+	}
 }

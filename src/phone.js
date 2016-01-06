@@ -22,7 +22,7 @@ var locationOptions = {
 //---------------------------------------------------------
 function GetStaticWeather()
 {
-  console.log("getting static weather");
+  //console.log("getting static weather");
   
   var url = "http://api.openweathermap.org/data/2.5/weather?lat=" +
       Lat + "&lon=" + Lng + "&appid=" + apiKey;
@@ -38,7 +38,8 @@ function GetStaticWeather()
       //console.log("Temperature is " + temperature);
 
       // Conditions
-      var conditions = json.weather[0].main;      
+      var conditions = json.weather[0].icon;  
+			//console.log("conditions - js = " + conditions);
       //console.log("Conditions are " + conditions);
       
       // Assemble dictionary using our keys
@@ -81,8 +82,8 @@ function locationSuccess(pos) {
       //console.log("Temperature is -.js- " + temperature);
 
       // Conditions
-      conditions = json.weather[0].main;      
-      //console.log("Conditions are " + conditions);
+      conditions = json.weather[0].icon;      
+      //console.log("icon is" + conditions);
 			
 			// Assemble dictionary using our keys
       var dictionary = {

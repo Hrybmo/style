@@ -64,12 +64,6 @@
                 "type": "png"
             },
             {
-                "file": "images/bluetooth-16.png",
-                "name": "IMAGE_BT",
-                "targetPlatforms": null,
-                "type": "png-trans"
-            },
-            {
                 "file": "images/01.png",
                 "name": "IMAGE_01",
                 "targetPlatforms": null,
