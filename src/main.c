@@ -17,23 +17,24 @@ of seconds then trigger timer start/stop, 1 vibration for start and 2 for finish
 #define ACCEL_NUM_SAMPLES 10
 
 //globals
-static char user_text[] = "SUPER JACK"; //max 11 charictors
+//static char user_text[] = "SUPER JACK"; //max 11 charictors
 static char time_text[] = "12:12";
 static char day_text[] = "tue";
 static char date_text[] = "12-30-2015";
 static char batt_text[] = "100";
+static char *userTextPtr = 0;
 static BatteryChargeState charge_state;
 static int temperatureUnits;
 static int temperature;
 static int temperatureIncoming;
 static char temperature_buffer[8];
-static int uiColor;
 static bool isTimerMode = false;
-int16_t accelSleepData;
+bool isSleeping = false;
 
 //prototypes
 void handle_tick(struct tm* tick_time, TimeUnits units_changed);
 static void data_handler(AccelData *data, uint32_t num_samples);
+static void tap_handler(AccelAxisType axis, int32_t direction);
 void handle_init(void);
 void handle_deinit(void);
 
@@ -48,10 +49,17 @@ int main(void) {
 void handle_init(void) {
   initialise_ui(); 
   CallBack_init();
+	userTextPtr = CallBack_getUserTextPtr();
+	ui_setTempTo("");
+	ui_setDayTo("");
+	ui_setDateTo("");
+	ui_setTimeTo("");
+	ui_setBattTo("");
+	ui_setUserTextTo("");
+
   //setup events
   tick_timer_service_subscribe(SECOND_UNIT , handle_tick);
-	accel_data_service_subscribe(ACCEL_NUM_SAMPLES, data_handler);
-	accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
+	accel_tap_service_subscribe(tap_handler);
   //show the ui
   ui_pushStack();
 }
@@ -62,122 +70,48 @@ void handle_deinit(void) {
 //--------------------------------------------------
 //for sleep mode wakeup
 static void tap_handler(AccelAxisType axis, int32_t direction) {
-  tick_timer_service_subscribe(SECOND_UNIT , handle_tick);
-	accel_data_service_subscribe(ACCEL_NUM_SAMPLES, data_handler);
-	accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
-	accel_tap_service_unsubscribe();
+	#define TENMS_SAMPLES_FOR_GUESTURE 5
+	if(isSleeping){
+		isSleeping = false;
+		tick_timer_service_subscribe(SECOND_UNIT , handle_tick);
+	}
+	else{
+    accel_data_service_subscribe(TENMS_SAMPLES_FOR_GUESTURE, data_handler);
+    accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
+	}
 }
+
 //-----------------------------------------------------------------
 static void data_handler(AccelData *data, uint32_t num_samples) {
-	#define ACCEL_POS_IDLE_TOLERANCE 500
-	#define ACCEL_NEG_IDLE_TOLERANCE -500
-	#define ACCEL_BUFFER_SIZE 20
-	#define ACCEL_NEG_THREASHOLD -600
-	#define ACCEL_POS_THREASHOLD 600
-	#define SEQUENCE_ITERATIONS_NEEDED 3
-	static unsigned char bufferIndex = 0;
-	static int xBuffer[ACCEL_BUFFER_SIZE] = {0};
-	static int yBuffer[ACCEL_BUFFER_SIZE] = {0};
-	static int zBuffer[ACCEL_BUFFER_SIZE] = {0};
-	unsigned char searchSequenceTrigger = 0;
-	unsigned char searchSequenceIteration = 0;
-	
+	#define TRIP_POINT -800
 	static const uint32_t segments[] = {200, 200, 200, 200, 200};
 	VibePattern vibrationPattern1 = {
   .durations = segments,
   .num_segments = ARRAY_LENGTH(segments),
 	};
-	
-	accelSleepData = zBuffer[0];
-	
-	#if 0
-	static uint8_t accelDebugSequence = 0;
-	if((accelDebugSequence == 3)){
-		APP_LOG(APP_LOG_LEVEL_INFO, "starting accel dump, bufferindex = %d",bufferIndex);
-		for(uint8_t a = 0; a < ACCEL_BUFFER_SIZE; a++){
-			APP_LOG(APP_LOG_LEVEL_INFO, "X= %d Y= %d Z= %d",xBuffer[a], yBuffer[a], zBuffer[a]);
-		}				
-		APP_LOG(APP_LOG_LEVEL_INFO, "accel dump end");								
-	}
-	accelDebugSequence++;	
-	//APP_LOG(APP_LOG_LEVEL_INFO, "accel num_samples= %lu",num_samples);
-	#endif
-
-	//ring buffer time for the data
-	for(uint8_t a = 0; a < num_samples; a++){
-		if(bufferIndex == ACCEL_BUFFER_SIZE){
-			bufferIndex = 0;
-		}
-		//APP_LOG(APP_LOG_LEVEL_INFO, "bufferIndex = %d",bufferIndex);		
-		xBuffer[bufferIndex] = data[a].x;
-		yBuffer[bufferIndex] = data[a].y;
-		zBuffer[bufferIndex] = data[a].z;
-		bufferIndex++;
-	}
-	
-	//X+ = 1 button to 3 button sides out
+  //X+ = 1 button to 3 button sides out
 	//Y+ = bottom link to top link
 	//Z+ = coming out of the watch glass
 	
-	//look to see if we have a timer trigger
-	for(char a = 0; a < ACCEL_BUFFER_SIZE; a++){
-		//APP_LOG(APP_LOG_LEVEL_INFO, "buffer index = %d",bufferIndex);
-		if(bufferIndex == ACCEL_BUFFER_SIZE){
-			bufferIndex = 0;
-		}
-		switch(searchSequenceTrigger){
-			//z is negative (upright) others are close to zero
-			case 0:{ 
-				if((zBuffer[bufferIndex] < ACCEL_NEG_THREASHOLD) &&
-				   (yBuffer[bufferIndex] < ACCEL_POS_IDLE_TOLERANCE) &&
-					 (yBuffer[bufferIndex] > ACCEL_NEG_IDLE_TOLERANCE) &&
-					 (xBuffer[bufferIndex] < ACCEL_POS_IDLE_TOLERANCE) &&
-					 (xBuffer[bufferIndex] > ACCEL_NEG_IDLE_TOLERANCE)){
-					searchSequenceTrigger++;
-					//APP_LOG(APP_LOG_LEVEL_INFO, "sequence 0 trigger");
-				}
-				break;
-			}
-			//Y is negative (tilted 90°) others are close to zero
-			case 1:{
-				if((yBuffer[bufferIndex] > ACCEL_POS_THREASHOLD) &&
-				   (xBuffer[bufferIndex] < ACCEL_POS_IDLE_TOLERANCE) &&
-					 (xBuffer[bufferIndex] > ACCEL_NEG_IDLE_TOLERANCE) &&
-					 (zBuffer[bufferIndex] < ACCEL_POS_IDLE_TOLERANCE) &&
-					 (zBuffer[bufferIndex] > ACCEL_NEG_IDLE_TOLERANCE)){
-					searchSequenceTrigger = 0;
-					searchSequenceIteration++;
-					//APP_LOG(APP_LOG_LEVEL_INFO, "sequence 1 trigger");
-				}
-				break;
-			}
-		}																							
-		bufferIndex++;
-	}
-	
-	//clear y logs after trigger - vibration causes false trigger
-	if(searchSequenceIteration >= SEQUENCE_ITERATIONS_NEEDED){
-		if(isTimerMode){
-			vibes_enqueue_custom_pattern(vibrationPattern1);
-			isTimerMode = false;
-			for(uint8_t a = 0; a < ACCEL_BUFFER_SIZE; a++){
-				yBuffer[a] = 0;
-			}
-			light_enable_interaction();
-			//APP_LOG(APP_LOG_LEVEL_INFO, "off");
-		}
-		else{
-			vibes_short_pulse();
-			isTimerMode = true;
-			for(uint8_t a = 0; a < ACCEL_BUFFER_SIZE; a++){
-				yBuffer[a] = 0;
-			}
+	//see if we are vertical for stopwatch
+	//APP_LOG(APP_LOG_LEVEL_INFO, "accel x = %d",data[num_samples - 1].x);
+		if(data[num_samples - 1].x < TRIP_POINT){
+			if(isTimerMode){
+				vibes_enqueue_custom_pattern(vibrationPattern1);
+				isTimerMode = false;
 				light_enable_interaction();
-			//APP_LOG(APP_LOG_LEVEL_INFO, "on");
+				//APP_LOG(APP_LOG_LEVEL_INFO, "off");
+			}
+			else{
+				vibes_short_pulse();
+				isTimerMode = true;
+				light_enable_interaction();
+				//APP_LOG(APP_LOG_LEVEL_INFO, "on");
+			}
 		}
-	}
-
+	accel_data_service_unsubscribe();
 }
+
 //------------------------------------------------------------------------------
 void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 	#define SLEEP_MODE_BUFFER_SIZE 30
@@ -191,13 +125,15 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 	static uint8_t sleepModeBufferIndex = 0;
 	int accelMax = -10000;
 	int accelMin = 10000;
+	AccelData accelData;
 	
 	//sleep mode check
 	if(tick_time->tm_sec == 0){
+		accel_service_peek(&accelData);
 		if(sleepModeBufferIndex == SLEEP_MODE_BUFFER_SIZE){
 			sleepModeBufferIndex = 0;
 		}
-		sleepModeBuffer[sleepModeBufferIndex] = accelSleepData;
+		sleepModeBuffer[sleepModeBufferIndex] = accelData.x;
 		sleepModeBufferIndex++;
 		
 		//check array for min max
@@ -219,8 +155,7 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 		
 		if ((accelMax - accelMin) < SLEEP_MODE_ACCEL_TOLERANCE){
 			//activate sleep mode
-			accel_tap_service_subscribe(tap_handler);
-			accel_data_service_unsubscribe();
+			isSleeping = true;
 			tick_timer_service_unsubscribe();
 			ui_setUserTextTo("");
 			ui_setTimeTo("-- --");
@@ -242,7 +177,7 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 	}
 	else{
 		secondsTickTimer = 0;
-		ui_setUserTextTo(user_text);
+		ui_setUserTextTo(userTextPtr);
 	}
 	
   //is weather update time?
@@ -256,6 +191,10 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 	} 
 	else{
     strftime(time_text, sizeof(time_text), "%I:%M", tick_time);
+		//if there is a zero first then remove it
+		if(!(memcmp(time_text,"0",1))){ 
+			memcpy(time_text,(time_text + 1),sizeof(time_text)-1);
+		}
   }
 	ui_setTimeTo(time_text);
 	
@@ -287,7 +226,7 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 			snprintf(temperature_buffer, sizeof(temperature_buffer), "%d°C", temperature);
 		}
 		ui_setTempTo(temperature_buffer);
-		}
+	}
 }
 
 
