@@ -41,11 +41,10 @@ void initialise_ui(void) {
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_time);
   
   // s_textlayer_batt
-  s_textlayer_batt = text_layer_create(GRect(121, 153, 21, 15));
+  s_textlayer_batt = text_layer_create(GRect(110, 88, 27, 15));
   text_layer_set_background_color(s_textlayer_batt, GColorClear);
-  text_layer_set_text_color(s_textlayer_batt, GColorWhite);
   text_layer_set_text(s_textlayer_batt, "100");
-  text_layer_set_text_alignment(s_textlayer_batt, GTextAlignmentRight);
+  text_layer_set_text_alignment(s_textlayer_batt, GTextAlignmentCenter);
   text_layer_set_font(s_textlayer_batt, s_res_gothic_14);
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_batt);
   
@@ -66,7 +65,7 @@ void initialise_ui(void) {
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_day);
   
   // s_textlayer_w_temp
-  s_textlayer_w_temp = text_layer_create(GRect(34, 130, 63, 28));
+  s_textlayer_w_temp = text_layer_create(GRect(29, 130, 63, 28));
   text_layer_set_background_color(s_textlayer_w_temp, GColorClear);
   text_layer_set_text(s_textlayer_w_temp, "-10°F");
   text_layer_set_text_alignment(s_textlayer_w_temp, GTextAlignmentCenter);
@@ -74,7 +73,7 @@ void initialise_ui(void) {
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_w_temp);
   
   // s_bitmaplayer_weather_01
-  s_bitmaplayer_weather_01 = bitmap_layer_create(GRect(91, 130, 26, 26));
+  s_bitmaplayer_weather_01 = bitmap_layer_create(GRect(86, 130, 26, 26));
   bitmap_layer_set_bitmap(s_bitmaplayer_weather_01, s_res_image_01);
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_bitmaplayer_weather_01);
   
@@ -189,6 +188,7 @@ void ui_setBackgroundColorTo(GColor color){
 			current_palette[i].argb = (current_palette[i].argb & 0xC0)| (color.argb & 0x3F);
 		}
 	}
+	window_set_background_color(s_window,color);
 }
 
 int get_num_palette_colors(GBitmap *b){
@@ -203,3 +203,46 @@ int get_num_palette_colors(GBitmap *b){
 	}
 
 }
+
+GRect roundOffset(GRect r){
+	return GRect((r.origin.x + 18), r.origin.y + 7, r.size.w, r.size.h);
+}		
+
+void ui_fitToRound(){
+	Layer *layer; 
+	GRect frame;
+	
+	layer = bitmap_layer_get_layer(s_bitmaplayer_bg);
+	frame = layer_get_frame(layer);
+	layer_set_frame(layer, roundOffset(frame));
+	
+	layer = bitmap_layer_get_layer(s_bitmaplayer_weather_01);
+	frame = layer_get_frame(layer);
+	layer_set_frame(layer, roundOffset(frame));
+	
+	layer = text_layer_get_layer(s_textlayer_time);
+	frame = layer_get_frame(layer);
+	layer_set_frame(layer, roundOffset(frame));
+	
+	layer = text_layer_get_layer(s_textlayer_batt);
+	frame = layer_get_frame(layer);
+	layer_set_frame(layer, roundOffset(frame));
+
+	layer = text_layer_get_layer(s_textlayer_date);
+	frame = layer_get_frame(layer);
+	layer_set_frame(layer, roundOffset(frame));
+
+	layer = text_layer_get_layer(s_textlayer_day);
+	frame = layer_get_frame(layer);
+	layer_set_frame(layer, roundOffset(frame));
+	
+	layer = text_layer_get_layer(s_textlayer_w_temp);
+	frame = layer_get_frame(layer);
+	layer_set_frame(layer, roundOffset(frame));
+	
+  layer = text_layer_get_layer(s_textlayer_bot_user);
+	frame = layer_get_frame(layer);
+	layer_set_frame(layer, roundOffset(frame));
+}
+									
+							

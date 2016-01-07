@@ -8,8 +8,7 @@ shutting down other modules.
 tweak this module after setting up the UI
 -=Functional requirenment specification=-
 - stay on second ticks for quick ui response on change ex. clock 24 to 12
-- suscribe to accelservice, if triggered x amount of times within x amount 
-of seconds then trigger timer start/stop, 1 vibration for start and 2 for finished
+- stop watch guesture
 - read from excel peek every minute, if 30 rolling samples are the same (within +/- x then goto sleep)
 - if in sleep accelservice will auto wake
 */
@@ -57,8 +56,13 @@ void handle_init(void) {
 	ui_setBattTo("");
 	ui_setUserTextTo("");
 	
+	#ifdef PBL_ROUND
+	ui_fitToRound();
+	#endif
+	
 	ui_setBackgroundColorTo(GColorPastelYellow);
 	ui_setForegroundColorTo(GColorMagenta);
+	
   //setup events
   tick_timer_service_subscribe(SECOND_UNIT , handle_tick);
 	accel_tap_service_subscribe(tap_handler);

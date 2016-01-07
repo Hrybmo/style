@@ -16,3 +16,4 @@ void ui_setUserTextTo(char *buff);
 void ui_setWeatherTo(uint8_t id);
 void ui_setBackgroundColorTo(GColor color);
 void ui_setForegroundColorTo(GColor color);
+void ui_fitToRound();

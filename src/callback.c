@@ -10,8 +10,6 @@ static void CallBack_refreshPersistance(void);
 // Store incoming information
 static int temperatureUnits = 'F';
 static int temperature = 0;
-static int temperature_hi = 0;
-static int temperature_lo = 0;
 static int isWeatherDataAvailable = 0;
 static int isGPS = 1;
 static char sLatitude[20] = "1";
