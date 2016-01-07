@@ -1,6 +1,6 @@
 #include <pebble.h>
 #include "ui.h"
-
+int get_num_palette_colors(GBitmap *b);
 // BEGIN AUTO-GENERATED UI CODE; DO NOT MODIFY
 static Window *s_window;
 static GBitmap *s_res_image_bg1;
@@ -162,4 +162,44 @@ void ui_setWeatherTo(uint8_t id){
 			s_res_image_01 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_50);
 			break;
 	}
+}
+
+void ui_setForegroundColorTo(GColor color){
+	int num_palette_items = get_num_palette_colors(s_res_image_bg1);
+	GColor *current_palette = gbitmap_get_palette(s_res_image_bg1);
+	for(int i = 0; i < num_palette_items; i++){
+		if ((GColorWhite.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
+			current_palette[i].argb = (current_palette[i].argb & 0xC0)| (color.argb & 0x3F);
+		}
+	}
+	num_palette_items = get_num_palette_colors(s_res_image_01);
+	current_palette = gbitmap_get_palette(s_res_image_01);
+	for(int i = 0; i < num_palette_items; i++){
+		if ((GColorWhite.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
+			current_palette[i].argb = (current_palette[i].argb & 0xC0)| (color.argb & 0x3F);
+		}
+	}
+}
+
+void ui_setBackgroundColorTo(GColor color){
+	int num_palette_items = get_num_palette_colors(s_res_image_bg1);
+	GColor *current_palette = gbitmap_get_palette(s_res_image_bg1);
+	for(int i = 0; i < num_palette_items; i++){
+		if ((GColorBlack.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
+			current_palette[i].argb = (current_palette[i].argb & 0xC0)| (color.argb & 0x3F);
+		}
+	}
+}
+
+int get_num_palette_colors(GBitmap *b){
+	GBitmapFormat format = gbitmap_get_format(b);
+	switch (format) {
+		case GBitmapFormat1Bit: return 0;
+		case GBitmapFormat8Bit: return 0;
+		case GBitmapFormat1BitPalette: return 2;
+		case GBitmapFormat2BitPalette: return 4;
+		case GBitmapFormat4BitPalette: return 16;
+		default: return 0;
+	}
+
 }

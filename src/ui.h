@@ -14,3 +14,5 @@ void ui_setTimeTo(char *buff);
 void ui_setBattTo(char *buff);
 void ui_setUserTextTo(char *buff);
 void ui_setWeatherTo(uint8_t id);
+void ui_setBackgroundColorTo(GColor color);
+void ui_setForegroundColorTo(GColor color);

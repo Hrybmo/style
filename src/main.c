@@ -56,7 +56,9 @@ void handle_init(void) {
 	ui_setTimeTo("");
 	ui_setBattTo("");
 	ui_setUserTextTo("");
-
+	
+	ui_setBackgroundColorTo(GColorPastelYellow);
+	ui_setForegroundColorTo(GColorMagenta);
   //setup events
   tick_timer_service_subscribe(SECOND_UNIT , handle_tick);
 	accel_tap_service_subscribe(tap_handler);
