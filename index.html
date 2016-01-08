@@ -110,11 +110,86 @@ $(document).ready(function(){
     });
   });
   
+  function getClosestColor(value){
+	if(value <= 0x55){
+		if(value >= 0x2A){
+			value = 0x55;
+		}
+		else{
+			value = 0x00;
+		}
+		return value;
+	}
+	if(value <= 0xAA){
+		if(value >= 0x80){
+			value = 0xAA;
+		}
+		else{
+			value = 0x55;
+		}
+		return value;
+	}
+	if(value <= 0xFF){
+		if(value >= 0xD5){
+			value = 0xFF;
+		}
+		else{
+			value = 0xAA;
+		}
+		return value;
+	}
+  }
+  
+  
   $("#foreground_select").change(function(){
+	var string = ""; 
+	var value = 0;
+	var red = 0;
+	var green = 0;
+	var blue = 0;
+	
+	string = "0x" + foreground_select.value;
+	value = Number(string);
+	//select closest value
+	//r	
+	red = (value >> 16) & 0xFF;
+	red = getClosestColor(red);
+	//g
+	green = (value >> 8) & 0xFF;
+	green = getClosestColor(green);
+	//b
+	blue = value & 0xFF;
+	blue = getClosestColor(blue);
+	 
+	string = red.toString(16) + green.toString(16) + blue.toString(16);
+	
+	foreground_select.value = string;
 	foreground_select.style.backgroundColor = foreground_select.value;
   })
   
     $("#background_select").change(function(){
+	var string = ""; 
+	var value = 0;
+	var red = 0;
+	var green = 0;
+	var blue = 0;
+	
+	string = "0x" + background_select.value;
+	value = Number(string);
+	//select closest value
+	//r	
+	red = (value >> 16) & 0xFF;
+	red = getClosestColor(red);
+	//g
+	green = (value >> 8) & 0xFF;
+	green = getClosestColor(green);
+	//b
+	blue = value & 0xFF;
+	blue = getClosestColor(blue);
+	 
+	string = red.toString(16) + green.toString(16) + blue.toString(16);
+	
+	background_select.value = string;
 	background_select.style.backgroundColor = background_select.value;
   })
   
@@ -189,3 +264,4 @@ $(document).ready(function(){
 </script>
 </body>
 </html>
+
