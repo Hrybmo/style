@@ -1,6 +1,7 @@
 #include <pebble.h>
 #include "callback.h"
-  
+#include <ctype.h>
+
 static void inbox_dropped_callback(AppMessageResult reason, void *context);
 static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResult reason, void *context);
 static void outbox_sent_callback(DictionaryIterator *iterator, void *context);
@@ -157,13 +158,13 @@ void CallBack_init(void)
   app_message_register_outbox_sent(outbox_sent_callback); 
   
   // Open AppMessage
-  app_message_open(100,100);
+  app_message_open(200,200);
 }
 
 
 //----------------private start----------------------
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
-  APP_LOG(APP_LOG_LEVEL_ERROR, "Message dropped!");
+  APP_LOG(APP_LOG_LEVEL_ERROR, "Message dropped!  %d",reason);
 }
 
 static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResult reason, void *context) {
@@ -178,12 +179,34 @@ static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
     CallBack_sendWeatherMessage();
   }
 }
+//---------------------------------------
+unsigned int HexStringToUInt(char const* hexstring)
+{
+    unsigned int result = 0;
+    char const *c = hexstring;
+    unsigned char thisC;
+    while( (thisC = *c) != 0 )
+    {
+thisC = toupper(thisC);
+        result <<= 4;
+        if( isdigit(thisC))
+            result += thisC - '0';
+        else if(isxdigit(thisC))
+            result += thisC - 'A' + 10;
+        else
+        {
+						APP_LOG(APP_LOG_LEVEL_DEBUG, "ERROR: Unrecognised hex character \"%c\"", thisC);
+            return 0;
+        }
+        ++c;
+    }
+    return result;  
+}
 
 //----------------------------------------------------------------
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   APP_LOG(APP_LOG_LEVEL_INFO, "inbox received -callback-"); 
   char incomming[20];
-  
   // Read first item
   Tuple *t = dict_read_first(iterator);
 
@@ -193,18 +216,22 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     switch(t->key) {
       
     case KEY_BACK_COLOR:
-      background_color = (uint32_t)t->value->int32;
+			memcpy(incomming,(t->value->cstring),sizeof(incomming));
+			//APP_LOG(APP_LOG_LEVEL_INFO, "background_color incomming -callback- %s",incomming);
+			background_color = (uint32_t) HexStringToUInt(incomming);
 			persist_write_int(KEY_BACK_COLOR,background_color);
-			APP_LOG(APP_LOG_LEVEL_INFO, "background_color -callback- %u",(unsigned int)background_color);
+			//APP_LOG(APP_LOG_LEVEL_INFO, "background_color -callback- %u",(unsigned int)background_color);
       break;
 			
 		case KEY_FORE_COLOR:
-      foreground_color = (uint32_t)t->value->int32;
+      memcpy(incomming,(t->value->cstring),sizeof(incomming));
+			foreground_color = (uint32_t) HexStringToUInt(incomming);
 			persist_write_int(KEY_FORE_COLOR,foreground_color);
       break;	
 			
 		case KEY_TEXT_COLOR:
-      text_color = (uint32_t)t->value->int32;
+      memcpy(incomming,(t->value->cstring),sizeof(incomming));
+			text_color = (uint32_t) HexStringToUInt(incomming);
 			persist_write_int(KEY_TEXT_COLOR,text_color);
       break;		
 			

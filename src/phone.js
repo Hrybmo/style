@@ -171,7 +171,8 @@ Pebble.addEventListener("showConfiguration",
   function(e) {
     //console.log(e.type);
     //console.log("isPersistanceUploaded = " + isPersistanceUploaded);
-    Pebble.openURL("http://hrybmo.github.io/style"); 
+    //Pebble.openURL("http://hrybmo.github.io/style");
+		Pebble.openURL("http://jjh4.host-ed.me/");
   }
 );
 //-----------------------------------------------------------
