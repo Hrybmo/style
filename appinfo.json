@@ -1,6 +1,8 @@
 {
     "appKeys": {
+        "KEY_BACK_COLOR": 11,
         "KEY_CONDITIONS": 3,
+        "KEY_FORE_COLOR": 12,
         "KEY_IS_GPS": 6,
         "KEY_JS_READY": 1,
         "KEY_LATITUDE": 7,
@@ -8,6 +10,7 @@
         "KEY_PERSISTANT_MESSAGE": 10,
         "KEY_TEMPERATURE": 2,
         "KEY_TEMP_UNITS": 4,
+        "KEY_TEXT_COLOR": 13,
         "KEY_USER_TEXT": 5,
         "KEY_VERSION": 0,
         "KEY_WEATHER_MESSAGE": 9

@@ -182,9 +182,13 @@ Pebble.addEventListener("webviewclosed",
                       "KEY_IS_GPS" : configuration.isGPS,
                       "KEY_LATITUDE": configuration.latitude,
                       "KEY_LONGITUDE": configuration.longitude,
-											"KEY_USER_TEXT": configuration.userText};
+											"KEY_USER_TEXT": configuration.userText,
+											"KEY_BACK_COLOR": configuration.backgroundColor,
+											"KEY_FORE_COLOR": configuration.foregroundColor,
+											"KEY_TEXT_COLOR": configuration.textColor
+										 };
     
-    //console.log("Configuration window returned: " + JSON.stringify(configuration));
+    console.log("Configuration window returned: " + JSON.stringify(configuration));
     //save locally too
     if(configuration.isGPS == "GPS"){
       isGps = 1;
@@ -199,13 +203,13 @@ Pebble.addEventListener("webviewclosed",
     //Send to Pebble, persist there
     Pebble.sendAppMessage(dictionary,
       function(e) {
-        //console.log(e.type);
-        //console.log("Sending configuration data...");
+        console.log(e.type);
+        console.log("Sending configuration data...");
         getWeather();
       },
       function(e) {
-        //console.log(e.type);
-        //console.log("configuration feedback failed!");
+        console.log(e.type);
+        console.log("configuration feedback failed!");
       }
     );
   }

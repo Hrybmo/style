@@ -60,9 +60,6 @@ void handle_init(void) {
 	ui_fitToRound();
 	#endif
 	
-	ui_setBackgroundColorTo(GColorPastelYellow);
-	ui_setForegroundColorTo(GColorMagenta);
-	
   //setup events
   tick_timer_service_subscribe(SECOND_UNIT , handle_tick);
 	accel_tap_service_subscribe(tap_handler);
@@ -233,6 +230,10 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 		}
 		ui_setTempTo(temperature_buffer);
 	}
+	
+	ui_setBackgroundColorTo(CallBack_getBackgroundColor());
+	ui_setForegroundColorTo(CallBack_getForegroundColor());
+	ui_setTextColorTo(CallBack_getTextColor());
 }
 
 

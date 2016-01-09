@@ -162,7 +162,7 @@ void ui_setWeatherTo(uint8_t id){
 			break;
 	}
 }
-
+/*
 void ui_setForegroundColorTo(GColor color){
 	int num_palette_items = get_num_palette_colors(s_res_image_bg1);
 	GColor *current_palette = gbitmap_get_palette(s_res_image_bg1);
@@ -179,18 +179,46 @@ void ui_setForegroundColorTo(GColor color){
 		}
 	}
 }
-
-void ui_setBackgroundColorTo(GColor color){
+*/
+//------------------------------------------------------------
+void ui_setBackgroundColorTo(uint32_t color){
 	int num_palette_items = get_num_palette_colors(s_res_image_bg1);
 	GColor *current_palette = gbitmap_get_palette(s_res_image_bg1);
 	for(int i = 0; i < num_palette_items; i++){
 		if ((GColorBlack.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
-			current_palette[i].argb = (current_palette[i].argb & 0xC0)| (color.argb & 0x3F);
+			current_palette[i].argb = (current_palette[i].argb & 0xC0)| (color & 0x3F);
 		}
 	}
-	window_set_background_color(s_window,color);
+	window_set_background_color(s_window,GColorFromHEX(color));
 }
-
+//----------------------------------------------------------------------
+void ui_setForegroundColorTo(uint32_t color){
+	int num_palette_items = get_num_palette_colors(s_res_image_bg1);
+	GColor *current_palette = gbitmap_get_palette(s_res_image_bg1);
+	for(int i = 0; i < num_palette_items; i++){
+		if ((GColorWhite.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
+			current_palette[i].argb = (current_palette[i].argb & 0xC0)| (color & 0x3F);
+		}
+	}
+	num_palette_items = get_num_palette_colors(s_res_image_01);
+	current_palette = gbitmap_get_palette(s_res_image_01);
+	for(int i = 0; i < num_palette_items; i++){
+		if ((GColorWhite.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
+			current_palette[i].argb = (current_palette[i].argb & 0xC0)| (color & 0x3F);
+		}
+	}
+	
+}
+//------------------------------------------------------------------
+void ui_setTextColorTo(uint32_t color){
+	text_layer_set_text_color(s_textlayer_time, GColorFromHEX(color));
+	text_layer_set_text_color(s_textlayer_batt, GColorFromHEX(color));
+	text_layer_set_text_color(s_textlayer_date, GColorFromHEX(color));
+	text_layer_set_text_color(s_textlayer_day, GColorFromHEX(color));
+	text_layer_set_text_color(s_textlayer_w_temp, GColorFromHEX(color));
+	text_layer_set_text_color(s_textlayer_bot_user, GColorFromHEX(color));
+}
+//----------------------------------------------------------------------
 int get_num_palette_colors(GBitmap *b){
 	GBitmapFormat format = gbitmap_get_format(b);
 	switch (format) {

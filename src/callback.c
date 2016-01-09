@@ -18,6 +18,9 @@ static char sVersion[] = "1";
 static char isFirstWeather = 1;
 static char user_text[20] = {""};
 static uint8_t conditions = 1;
+static uint32_t background_color = 0;
+static uint32_t foreground_color = 0xFFFFFF;
+static uint32_t text_color = 0;
 //-----------public start--------------------------------
 int CallBack_getTemperature(void){
   return temperature;
@@ -35,6 +38,17 @@ uint8_t CallBack_getConditions(void){
   return conditions;
 }
 
+uint32_t CallBack_getBackgroundColor(void){
+  return background_color;
+}
+
+uint32_t CallBack_getForegroundColor(void){
+  return foreground_color;
+}
+
+uint32_t CallBack_getTextColor(void){
+  return text_color;
+}
 
 void *CallBack_getUserTextPtr(void){
 	return user_text;
@@ -110,6 +124,27 @@ void CallBack_refreshPersistance(void)
   else{
     persist_write_string(KEY_VERSION,sVersion);
   }
+	
+	  if (persist_exists(KEY_BACK_COLOR)){
+ 	 background_color = persist_read_int(KEY_BACK_COLOR);
+  }
+  else{
+      persist_write_int(KEY_BACK_COLOR,background_color);
+  }
+	
+		  if (persist_exists(KEY_FORE_COLOR)){
+ 	 foreground_color = persist_read_int(KEY_FORE_COLOR);
+  }
+  else{
+      persist_write_int(KEY_FORE_COLOR,foreground_color);
+  }
+	
+		  if (persist_exists(KEY_TEXT_COLOR)){
+ 	 text_color = persist_read_int(KEY_TEXT_COLOR);
+  }
+  else{
+      persist_write_int(KEY_TEXT_COLOR,text_color);
+  }
 }
 
 void CallBack_init(void)
@@ -128,15 +163,15 @@ void CallBack_init(void)
 
 //----------------private start----------------------
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
-  //APP_LOG(APP_LOG_LEVEL_ERROR, "Message dropped!");
+  APP_LOG(APP_LOG_LEVEL_ERROR, "Message dropped!");
 }
 
 static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResult reason, void *context) {
-  //APP_LOG(APP_LOG_LEVEL_ERROR, "Outbox send failed!");
+  APP_LOG(APP_LOG_LEVEL_ERROR, "Outbox send failed!");
 }
 
 static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
-  //APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success!");
+  APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success!");
   if(isFirstWeather)
     {
     isFirstWeather = 0;
@@ -146,7 +181,7 @@ static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
 
 //----------------------------------------------------------------
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
-  
+  APP_LOG(APP_LOG_LEVEL_INFO, "inbox received -callback-"); 
   char incomming[20];
   
   // Read first item
@@ -157,7 +192,23 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     // Which key was received?
     switch(t->key) {
       
-    case KEY_TEMPERATURE:
+    case KEY_BACK_COLOR:
+      background_color = (uint32_t)t->value->int32;
+			persist_write_int(KEY_BACK_COLOR,background_color);
+			APP_LOG(APP_LOG_LEVEL_INFO, "background_color -callback- %u",(unsigned int)background_color);
+      break;
+			
+		case KEY_FORE_COLOR:
+      foreground_color = (uint32_t)t->value->int32;
+			persist_write_int(KEY_FORE_COLOR,foreground_color);
+      break;	
+			
+		case KEY_TEXT_COLOR:
+      text_color = (uint32_t)t->value->int32;
+			persist_write_int(KEY_TEXT_COLOR,text_color);
+      break;		
+			
+		case KEY_TEMPERATURE:
       temperature = (int)t->value->int32;
 			//APP_LOG(APP_LOG_LEVEL_INFO, "temperature -callback- %i",temperature);
       isWeatherDataAvailable = 1;
