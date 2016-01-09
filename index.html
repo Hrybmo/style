@@ -4,7 +4,9 @@
   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 </head>
 <body>  
-<h1 style="text-decoration: underline;">STYLES config</h1>
+<h1 style="text-decoration: underline;">-=SuperDuper=-</h1>
+
+<hr>
 
 <p> Background color select: <input class="jscolor" select id="background_select" value="000000">
 </p>
@@ -12,12 +14,19 @@
 <p> Foreground color select: <input class="jscolor" select id="foreground_select" value="FFFFFF">
 </p>
 
+<p> Text color select: <input class="jscolor" select id="text_select" value="000000">
+</p>
+
+<hr>
+
 <p>Temperature select:
 <select id="temp_select">
 <option value="F">F</option>
 <option value="C">C</option>
 </select>
 </p>
+
+<hr>
 
 <p>Weather source:
 <select id="weatherSource">
@@ -34,10 +43,14 @@
 <p id="latitude">Latitude:</p>
 <p id="longitude">Longitude:</p>
 </div>
+
+<hr>
   
 <p>Custom text to display:
 <input type = "text" id = "customText" value = "" maxlength="13">
 </p>
+
+<hr>
 
 <p>
 Please make a donation if you can for...<br>
@@ -66,6 +79,7 @@ var zip = document.getElementById('zip');
 var userText = document.getElementById("customText");
 var foreground_select = document.getElementById("foreground_select");
 var background_select = document.getElementById("background_select");
+var text_select = document.getElementById("text_select");
   
 $(".noGPSclass").hide();
 $(document).ready(function(){
@@ -80,7 +94,8 @@ $(document).ready(function(){
 	  userText.value = localStorage['userText'];
 	  foreground_select.value = localStorage['foreground'];
 	  background_select.value = localStorage['background'];
-	  
+	  text_select.value = localStorage['textColor'];
+	   
 	  if ($('#weatherSource>option:selected').text() === "No GPS"){
 		 $(".noGPSclass").fadeIn();
 	  }
@@ -88,10 +103,12 @@ $(document).ready(function(){
 	else{
 		background_select.value = "000000";
 		foreground_select.value = "FFFFFF";
+		text_select.value = "000000";
 	}
 	
 	background_select.style.backgroundColor = background_select.value;
 	foreground_select.style.backgroundColor = foreground_select.value;
+	text_select.style.backgroundColor = text_select.value;
 })
   //----------------------------------------
   $("#zip_button").click(function(){
@@ -220,7 +237,10 @@ $(document).ready(function(){
       "isGPS": isGPS.options[isGPS.selectedIndex].value,
       "latitude": latitude.innerHTML,
       "longitude": longitude.innerHTML,
-      "userText": userText.value
+      "userText": userText.value,
+	  "foregroundColor": foreground_select.value,
+	  "backgroundColor": background_select.value,
+	  "textColor": text_select.value
     }
 	
 	// Save for next launch
@@ -232,6 +252,7 @@ $(document).ready(function(){
 	localStorage['userText'] = options['userText'];
 	localStorage['foreground'] = foreground_select.value;
 	localStorage['background'] = background_select.value;
+	localStorage['textColor'] = text_select.value;
 	
 	//console.log("userText = %s",userText.value);
     return options;
@@ -264,4 +285,3 @@ $(document).ready(function(){
 </script>
 </body>
 </html>
-
