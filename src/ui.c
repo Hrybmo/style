@@ -182,12 +182,21 @@ void ui_setForegroundColorTo(GColor color){
 */
 //------------------------------------------------------------
 void ui_setBackgroundColorTo(uint32_t color){
+	static bool isFirstCall = true;
+	static GColor oldColor;
+	
+	if(isFirstCall){
+		oldColor = GColorBlack;
+		isFirstCall = false;
+	}
+	
 	GColor gcolor = GColorFromHEX(color);
 	//APP_LOG(APP_LOG_LEVEL_INFO, "background color = %1u",(unsigned int)color);
 	int num_palette_items = get_num_palette_colors(s_res_image_bg1);
 	GColor *current_palette = gbitmap_get_palette(s_res_image_bg1);
 	for(int i = 0; i < num_palette_items; i++){
-		if ((GColorBlack.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
+		if ((oldColor.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
+			oldColor = gcolor;
 			current_palette[i].argb = (current_palette[i].argb & 0xC0)| (gcolor.argb & 0x3F);
 		}
 	}
@@ -195,18 +204,27 @@ void ui_setBackgroundColorTo(uint32_t color){
 }
 //----------------------------------------------------------------------
 void ui_setForegroundColorTo(uint32_t color){
+	static bool isFirstCall = true;
+	static GColor oldColor;
+	
+	if(isFirstCall){
+		oldColor = GColorWhite;
+		isFirstCall = false;
+	}
+	
 	GColor gcolor = GColorFromHEX(color);
 	int num_palette_items = get_num_palette_colors(s_res_image_bg1);
 	GColor *current_palette = gbitmap_get_palette(s_res_image_bg1);
 	for(int i = 0; i < num_palette_items; i++){
-		if ((GColorWhite.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
+		if ((oldColor.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
 			current_palette[i].argb = (current_palette[i].argb & 0xC0)| (gcolor.argb & 0x3F);
 		}
 	}
 	num_palette_items = get_num_palette_colors(s_res_image_01);
 	current_palette = gbitmap_get_palette(s_res_image_01);
 	for(int i = 0; i < num_palette_items; i++){
-		if ((GColorWhite.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
+		if ((oldColor.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
+			oldColor = gcolor;
 			current_palette[i].argb = (current_palette[i].argb & 0xC0)| (gcolor.argb & 0x3F);
 		}
 	}
@@ -216,9 +234,17 @@ void ui_setTextColorTo(uint32_t color){
 	GColor gcolor = GColorFromHEX(color);
 	int num_palette_items = get_num_palette_colors(s_res_image_01);
 	GColor *current_palette = gbitmap_get_palette(s_res_image_01);
+	static bool isFirstCall = true;
+	static GColor oldColor;
+	
+	if(isFirstCall){
+		oldColor = GColorBlack;
+		isFirstCall = false;
+	}
 	
 	for(int i = 0; i < num_palette_items; i++){
-		if ((GColorBlack.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
+		if ((oldColor.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
+			oldColor = gcolor;
 			current_palette[i].argb = (current_palette[i].argb & 0xC0)| (gcolor.argb & 0x3F);
 		}
 	}
