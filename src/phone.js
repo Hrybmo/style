@@ -188,7 +188,7 @@ Pebble.addEventListener("webviewclosed",
 											"KEY_TEXT_COLOR": configuration.textColor
 										 };
     
-    console.log("Configuration window returned: " + JSON.stringify(configuration));
+    //console.log("Configuration window returned: " + JSON.stringify(configuration));
     //save locally too
     if(configuration.isGPS == "GPS"){
       isGps = 1;
