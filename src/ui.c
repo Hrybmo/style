@@ -133,9 +133,10 @@ void ui_setBattTo(char *buff){
 void ui_setUserTextTo(char *buff){
 	text_layer_set_text(s_textlayer_bot_user,buff);
 }
-
+//---------------------------------------------------------
 void ui_setWeatherTo(uint8_t id){
 	switch (id){
+		gbitmap_destroy(s_res_image_01);
 		case 1:
 			s_res_image_01 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_01);
 			break;
@@ -161,100 +162,82 @@ void ui_setWeatherTo(uint8_t id){
 			s_res_image_01 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_50);
 			break;
 	}
+	bitmap_layer_set_bitmap(s_bitmaplayer_weather_01, s_res_image_01);
 }
-/*
-void ui_setForegroundColorTo(GColor color){
-	int num_palette_items = get_num_palette_colors(s_res_image_bg1);
-	GColor *current_palette = gbitmap_get_palette(s_res_image_bg1);
+
+//-----------------------------------------------------------------------'
+//much easier than seperate fuctions because of color overlapping
+void ui_setAllColors(uint32_t background, uint32_t foreground, uint32_t text){
+	static bool isFirstCall = true;
+	//static GColor oldTextColor;
+	static GColor oldForegroundColor;
+	static GColor oldBackgroundColor;
+	int num_palette_items;
+	GColor *current_palette;
+	
+	int index1 = 0;
+	int index2 = 0;
+	
+	if(isFirstCall){
+		oldForegroundColor = GColorWhite;
+		oldBackgroundColor = GColorBlack;
+		//oldTextColor = GColorBlack;
+		isFirstCall = false;
+	}
+	
+	//first do background image
+	num_palette_items = get_num_palette_colors(s_res_image_bg1);
+	current_palette = gbitmap_get_palette(s_res_image_bg1);
 	for(int i = 0; i < num_palette_items; i++){
-		if ((GColorWhite.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
-			current_palette[i].argb = (current_palette[i].argb & 0xC0)| (color.argb & 0x3F);
+		if ((oldForegroundColor.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
+			index1 = i;
 		}
 	}
+	for(int i = 0; i < num_palette_items; i++){
+		if ((oldBackgroundColor.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
+			index2 = i;
+		}
+	}
+	
+	current_palette[index1].argb = (current_palette[index1].argb & 0xC0)| 
+																 (GColorFromHEX(foreground).argb & 0x3F);
+	current_palette[index2].argb = (current_palette[index2].argb & 0xC0)|
+																 (GColorFromHEX(background).argb & 0x3F);
+
+	//now do weather
 	num_palette_items = get_num_palette_colors(s_res_image_01);
 	current_palette = gbitmap_get_palette(s_res_image_01);
 	for(int i = 0; i < num_palette_items; i++){
 		if ((GColorWhite.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
-			current_palette[i].argb = (current_palette[i].argb & 0xC0)| (color.argb & 0x3F);
+			index1 = i;
 		}
 	}
-}
-*/
-//------------------------------------------------------------
-void ui_setBackgroundColorTo(uint32_t color){
-	static bool isFirstCall = true;
-	static GColor oldColor;
-	
-	if(isFirstCall){
-		oldColor = GColorBlack;
-		isFirstCall = false;
-	}
-	
-	GColor gcolor = GColorFromHEX(color);
-	//APP_LOG(APP_LOG_LEVEL_INFO, "background color = %1u",(unsigned int)color);
-	int num_palette_items = get_num_palette_colors(s_res_image_bg1);
-	GColor *current_palette = gbitmap_get_palette(s_res_image_bg1);
 	for(int i = 0; i < num_palette_items; i++){
-		if ((oldColor.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
-			oldColor = gcolor;
-			current_palette[i].argb = (current_palette[i].argb & 0xC0)| (gcolor.argb & 0x3F);
-		}
-	}
-	window_set_background_color(s_window,GColorFromHEX(color));
-}
-//----------------------------------------------------------------------
-void ui_setForegroundColorTo(uint32_t color){
-	static bool isFirstCall = true;
-	static GColor oldColor;
-	
-	if(isFirstCall){
-		oldColor = GColorWhite;
-		isFirstCall = false;
-	}
-	
-	GColor gcolor = GColorFromHEX(color);
-	int num_palette_items = get_num_palette_colors(s_res_image_bg1);
-	GColor *current_palette = gbitmap_get_palette(s_res_image_bg1);
-	for(int i = 0; i < num_palette_items; i++){
-		if ((oldColor.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
-			current_palette[i].argb = (current_palette[i].argb & 0xC0)| (gcolor.argb & 0x3F);
-		}
-	}
-	num_palette_items = get_num_palette_colors(s_res_image_01);
-	current_palette = gbitmap_get_palette(s_res_image_01);
-	for(int i = 0; i < num_palette_items; i++){
-		if ((oldColor.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
-			oldColor = gcolor;
-			current_palette[i].argb = (current_palette[i].argb & 0xC0)| (gcolor.argb & 0x3F);
-		}
-	}
-}
-//------------------------------------------------------------------
-void ui_setTextColorTo(uint32_t color){
-	GColor gcolor = GColorFromHEX(color);
-	int num_palette_items = get_num_palette_colors(s_res_image_01);
-	GColor *current_palette = gbitmap_get_palette(s_res_image_01);
-	static bool isFirstCall = true;
-	static GColor oldColor;
-	
-	if(isFirstCall){
-		oldColor = GColorBlack;
-		isFirstCall = false;
-	}
-	
-	for(int i = 0; i < num_palette_items; i++){
-		if ((oldColor.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
-			oldColor = gcolor;
-			current_palette[i].argb = (current_palette[i].argb & 0xC0)| (gcolor.argb & 0x3F);
+		if ((GColorBlack.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
+			index2 = i;
 		}
 	}
 	
-	text_layer_set_text_color(s_textlayer_time, GColorFromHEX(color));
-	text_layer_set_text_color(s_textlayer_batt, GColorFromHEX(color));
-	text_layer_set_text_color(s_textlayer_date, GColorFromHEX(color));
-	text_layer_set_text_color(s_textlayer_day, GColorFromHEX(color));
-	text_layer_set_text_color(s_textlayer_w_temp, GColorFromHEX(color));
-	text_layer_set_text_color(s_textlayer_bot_user, GColorFromHEX(color));
+	current_palette[index1].argb = (current_palette[index1].argb & 0xC0)|
+																 (GColorFromHEX(foreground).argb & 0x3F);
+	current_palette[index2].argb = (current_palette[index2].argb & 0xC0)|
+																 (GColorFromHEX(text).argb & 0x3F);
+	
+	//set for round
+	window_set_background_color(s_window, GColorFromHEX(background));
+	
+	//now finish the text
+	text_layer_set_text_color(s_textlayer_time, GColorFromHEX(text));
+	text_layer_set_text_color(s_textlayer_batt, GColorFromHEX(text));
+	text_layer_set_text_color(s_textlayer_date, GColorFromHEX(text));
+	text_layer_set_text_color(s_textlayer_day, GColorFromHEX(text));
+	text_layer_set_text_color(s_textlayer_w_temp, GColorFromHEX(text));
+	text_layer_set_text_color(s_textlayer_bot_user, GColorFromHEX(text));
+	
+	//and save for next time
+	oldForegroundColor = GColorFromHEX(foreground);
+	oldBackgroundColor = GColorFromHEX(background);
+	//oldTextColor = GColorFromHEX(text);
 }
 //----------------------------------------------------------------------
 int get_num_palette_colors(GBitmap *b){

@@ -231,9 +231,12 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 		ui_setTempTo(temperature_buffer);
 	}
 	
-	ui_setBackgroundColorTo(CallBack_getBackgroundColor());
-	ui_setForegroundColorTo(CallBack_getForegroundColor());
-	ui_setTextColorTo(CallBack_getTextColor());
+	ui_setWeatherTo(CallBack_getConditions());
+	
+	ui_setAllColors(CallBack_getBackgroundColor(),
+									CallBack_getForegroundColor(),
+									CallBack_getTextColor());
+									
 }
 
 

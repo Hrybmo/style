@@ -205,7 +205,7 @@ thisC = toupper(thisC);
 
 //----------------------------------------------------------------
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
-  APP_LOG(APP_LOG_LEVEL_INFO, "inbox received -callback-"); 
+  //APP_LOG(APP_LOG_LEVEL_INFO, "inbox received -callback-"); 
   char incomming[20];
   // Read first item
   Tuple *t = dict_read_first(iterator);
@@ -243,28 +243,29 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
       
     case KEY_CONDITIONS:
       snprintf(incomming, sizeof(incomming), "%s", t->value->cstring);
-			if(memcmp("01",incomming,3) == 0){
+			//APP_LOG(APP_LOG_LEVEL_INFO, "conditions incomming = %s",incomming);
+			if(memcmp("01",incomming,2) == 0){
 				conditions = 1;
 			}
-			else if(memcmp("02",incomming,3) == 0){
+			else if(memcmp("02",incomming,2) == 0){
 				conditions = 2;
 			}
-			else if(memcmp("03",incomming,3) == 0){
+			else if(memcmp("03",incomming,2) == 0){
 				conditions = 3;
 			}
-			else if(memcmp("04",incomming,3) == 0){
+			else if(memcmp("04",incomming,2) == 0){
 				conditions = 4;
 			}
-			else if(memcmp("09",incomming,3) == 0){
+			else if(memcmp("09",incomming,2) == 0){
 				conditions = 9;
 			}
-			else if(memcmp("10",incomming,3) == 0){
+			else if(memcmp("10",incomming,2) == 0){
 				conditions = 10;
 			}
-			else if(memcmp("13",incomming,3) == 0){
+			else if(memcmp("13",incomming,2) == 0){
 				conditions = 13;
 			}
-			else if(memcmp("50",incomming,3) == 0){
+			else if(memcmp("50",incomming,2) == 0){
 				conditions = 50;
 			}
 			//APP_LOG(APP_LOG_LEVEL_INFO, "conditions - callback = %d",conditions);

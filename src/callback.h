@@ -20,6 +20,7 @@ void CallBack_sendPersistantMessage(void);
 int CallBack_isWeatherDataAvailable(void);
 int CallBack_getTemperature(void);
 int CallBack_getTemperatureUnits(void);
+uint8_t CallBack_getConditions(void);
 int CallBack_isInvertUiColor(void);
 void *CallBack_getUserTextPtr(void);
 uint32_t CallBack_getForegroundColor(void);

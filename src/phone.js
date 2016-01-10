@@ -40,7 +40,6 @@ function GetStaticWeather()
       // Conditions
       var conditions = json.weather[0].icon;  
 			//console.log("conditions - js = " + conditions);
-      //console.log("Conditions are " + conditions);
       
       // Assemble dictionary using our keys
       var dictionary = {
