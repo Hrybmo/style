@@ -1,6 +1,16 @@
 #include <pebble.h>
 #include "ui.h"
 int get_num_palette_colors(GBitmap *b);
+static GBitmap *s_res_image_02;
+static GBitmap *s_res_image_03_04;
+static GBitmap *s_res_image_09;
+static GBitmap *s_res_image_10;
+static GBitmap *s_res_image_11;
+static GBitmap *s_res_image_13;
+static GBitmap *s_res_image_50;
+
+GBitmap *bitmapArray[8]; //pointer array for color help
+
 // BEGIN AUTO-GENERATED UI CODE; DO NOT MODIFY
 static Window *s_window;
 static GBitmap *s_res_image_bg1;
@@ -133,43 +143,71 @@ void ui_setBattTo(char *buff){
 void ui_setUserTextTo(char *buff){
 	text_layer_set_text(s_textlayer_bot_user,buff);
 }
+//-------------------------------------------------------
+void ui_init_weather(void){
+	s_res_image_02 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_02);
+	s_res_image_03_04 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_03_04);
+	s_res_image_09 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_09);
+	s_res_image_10 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_10);
+	s_res_image_11 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_11);
+	s_res_image_13 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_13);
+	s_res_image_50 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_50);
+	
+	bitmapArray[0] = s_res_image_01;
+	bitmapArray[1] = s_res_image_02;
+	bitmapArray[2] = s_res_image_03_04;
+	bitmapArray[3] = s_res_image_09;
+	bitmapArray[4] = s_res_image_10;
+	bitmapArray[5] = s_res_image_11;
+	bitmapArray[6] = s_res_image_13;
+	bitmapArray[7] = s_res_image_50;
+}
+//--------------------------------------------------------
+void ui_destroy_weather(void){
+	gbitmap_destroy(s_res_image_02);
+	gbitmap_destroy(s_res_image_03_04);
+	gbitmap_destroy(s_res_image_09);
+	gbitmap_destroy(s_res_image_10);
+	gbitmap_destroy(s_res_image_11);
+	gbitmap_destroy(s_res_image_13);
+	gbitmap_destroy(s_res_image_50);	
+}
 //---------------------------------------------------------
 void ui_setWeatherTo(uint8_t id){
 	switch (id){
 		gbitmap_destroy(s_res_image_01);
 		case 1:
-			s_res_image_01 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_01);
+			bitmap_layer_set_bitmap(s_bitmaplayer_weather_01, s_res_image_01);
 			break;
 		case 2:
-			s_res_image_01 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_02);
+			bitmap_layer_set_bitmap(s_bitmaplayer_weather_01, s_res_image_02);
 			break;
 		case 3: case 4:
-			s_res_image_01 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_03_04);
+			bitmap_layer_set_bitmap(s_bitmaplayer_weather_01, s_res_image_03_04);
 			break;
 		case 9:
-			s_res_image_01 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_09);
+			bitmap_layer_set_bitmap(s_bitmaplayer_weather_01, s_res_image_09);
 			break;
 		case 10:
-			s_res_image_01 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_10);
+			bitmap_layer_set_bitmap(s_bitmaplayer_weather_01, s_res_image_10);
 			break;
 		case 11:
-			s_res_image_01 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_11);
+			bitmap_layer_set_bitmap(s_bitmaplayer_weather_01, s_res_image_11);
 			break;
 		case 13:
-			s_res_image_01 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_13);
+			bitmap_layer_set_bitmap(s_bitmaplayer_weather_01, s_res_image_13);
 			break;
 		case 50:
-			s_res_image_01 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_50);
+			bitmap_layer_set_bitmap(s_bitmaplayer_weather_01, s_res_image_50);
 			break;
 	}
-	bitmap_layer_set_bitmap(s_bitmaplayer_weather_01, s_res_image_01);
 }
 
 //-----------------------------------------------------------------------'
 //much easier than seperate fuctions because of color overlapping
 void ui_setAllColors(uint32_t background, uint32_t foreground, uint32_t text){
 	static bool isFirstCall = true;
-	//static GColor oldTextColor;
+	static GColor oldTextColor;
 	static GColor oldForegroundColor;
 	static GColor oldBackgroundColor;
 	int num_palette_items;
@@ -181,7 +219,7 @@ void ui_setAllColors(uint32_t background, uint32_t foreground, uint32_t text){
 	if(isFirstCall){
 		oldForegroundColor = GColorWhite;
 		oldBackgroundColor = GColorBlack;
-		//oldTextColor = GColorBlack;
+		oldTextColor = GColorBlack;
 		isFirstCall = false;
 	}
 	
@@ -204,24 +242,26 @@ void ui_setAllColors(uint32_t background, uint32_t foreground, uint32_t text){
 	current_palette[index2].argb = (current_palette[index2].argb & 0xC0)|
 																 (GColorFromHEX(background).argb & 0x3F);
 
-	//now do weather
-	num_palette_items = get_num_palette_colors(s_res_image_01);
-	current_palette = gbitmap_get_palette(s_res_image_01);
-	for(int i = 0; i < num_palette_items; i++){
-		if ((GColorWhite.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
-			index1 = i;
+	//now do weather for all images
+	for(uint8_t a = 0; a < 8; a++){
+		//GBitmap *bitmap = (GBitmap*) bitmap_layer_get_bitmap(s_bitmaplayer_weather_01);
+		num_palette_items = get_num_palette_colors(bitmapArray[a]);
+		current_palette = gbitmap_get_palette(bitmapArray[a]);
+		for(int i = 0; i < num_palette_items; i++){
+			if ((oldForegroundColor.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
+				index1 = i;
+			}
 		}
-	}
-	for(int i = 0; i < num_palette_items; i++){
-		if ((GColorBlack.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
-			index2 = i;
+		for(int i = 0; i < num_palette_items; i++){
+			if ((oldTextColor.argb & 0x3F)==(current_palette[i].argb & 0x3F)){
+				index2 = i;
+			}
 		}
+		current_palette[index1].argb = (current_palette[index1].argb & 0xC0)|
+																	 (GColorFromHEX(foreground).argb & 0x3F);
+		current_palette[index2].argb = (current_palette[index2].argb & 0xC0)|
+																	 (GColorFromHEX(text).argb & 0x3F);
 	}
-	
-	current_palette[index1].argb = (current_palette[index1].argb & 0xC0)|
-																 (GColorFromHEX(foreground).argb & 0x3F);
-	current_palette[index2].argb = (current_palette[index2].argb & 0xC0)|
-																 (GColorFromHEX(text).argb & 0x3F);
 	
 	//set for round
 	window_set_background_color(s_window, GColorFromHEX(background));
@@ -237,7 +277,7 @@ void ui_setAllColors(uint32_t background, uint32_t foreground, uint32_t text){
 	//and save for next time
 	oldForegroundColor = GColorFromHEX(foreground);
 	oldBackgroundColor = GColorFromHEX(background);
-	//oldTextColor = GColorFromHEX(text);
+	oldTextColor = GColorFromHEX(text);
 }
 //----------------------------------------------------------------------
 int get_num_palette_colors(GBitmap *b){

@@ -47,6 +47,7 @@ int main(void) {
 	
 void handle_init(void) {
   initialise_ui(); 
+	ui_init_weather();
   CallBack_init();
 	userTextPtr = CallBack_getUserTextPtr();
 	ui_setTempTo("");
@@ -69,6 +70,7 @@ void handle_init(void) {
 
 void handle_deinit(void) {
   destroy_ui();
+	ui_destroy_weather();
 }
 //--------------------------------------------------
 //for sleep mode wakeup

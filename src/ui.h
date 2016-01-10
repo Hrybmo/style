@@ -1,8 +1,9 @@
 #include "config.h"
 
 void initialise_ui(void);
+void ui_init_weather(void);
+void ui_destroy_weather(void);
 void destroy_ui(void);
-void ui_invert(void);
 void ui_pushStack(void);
 void ui_popStack(void);
   
