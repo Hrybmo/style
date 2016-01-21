@@ -18,6 +18,7 @@ static char sLongitude[20] = "1";
 static char sVersion[] = "1";
 static char isFirstWeather = 1;
 static char user_text[20] = {""};
+static char user_text2[20] = {""};
 static uint8_t conditions = 1;
 static uint32_t background_color = 0;
 static uint32_t foreground_color = 0xFFFFFF;
@@ -55,6 +56,9 @@ void *CallBack_getUserTextPtr(void){
 	return user_text;
 }
 
+void *CallBack_getUserText2Ptr(void){
+	return user_text2;
+}
 //----------------------------------------------
 void CallBack_sendWeatherMessage(void)
   {// Begin dictionary
@@ -96,6 +100,13 @@ void CallBack_refreshPersistance(void)
   }
   else{
 		 persist_write_string(KEY_USER_TEXT,user_text);
+  }
+	
+	 if (persist_exists(KEY_USER_TEXT2)){
+		persist_read_string((KEY_USER_TEXT2),user_text,sizeof(user_text2));
+  }
+  else{
+		 persist_write_string(KEY_USER_TEXT2,user_text2);
   }
   
   if (persist_exists(KEY_IS_GPS)){
@@ -312,6 +323,11 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 			case KEY_USER_TEXT:
       memcpy(user_text,(t->value->cstring),(t->length));
       persist_write_string(KEY_USER_TEXT,user_text);
+      break;
+			
+			case KEY_USER_TEXT2:
+      memcpy(user_text2,(t->value->cstring),(t->length));
+      persist_write_string(KEY_USER_TEXT2,user_text);
       break;
 
       case KEY_JS_READY:

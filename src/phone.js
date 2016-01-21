@@ -4,6 +4,8 @@ var Lng = "";
 var temp_units = "";
 var isPersistanceUploaded = 0;
 var apiKey = "df5992f787f04121486cd51dd9de74d9";
+var userText = ""; //for weather text sense
+var userText2 = ""; //for weather text sense
 
 var xhrRequest = function (url, type, callback) {
   var xhr = new XMLHttpRequest();
@@ -39,13 +41,27 @@ function GetStaticWeather()
 
       // Conditions
       var conditions = json.weather[0].icon;  
-			//console.log("conditions - js = " + conditions);
-      
-      // Assemble dictionary using our keys
-      var dictionary = {
-        "KEY_TEMPERATURE": temperature,
-        "KEY_CONDITIONS": conditions,
-      };
+			var weatherDescription = json.weather[0].description;
+			var text1 = weatherDescription.substr(0,15);
+			var text2 = weatherDescription.substr(16,31);
+			var dictionary;
+			//console.log("weatherDescription - js = " + weatherDescription);
+      if((userText === "") &&
+				 (userText2 === "")){
+				 dictionary = {
+					"KEY_TEMPERATURE": temperature,
+					"KEY_CONDITIONS": conditions,
+					"KEY_USER_TEXT": text1,
+					"KEY_USER_TEXT2": text2
+     		 };
+				
+			}
+			else{
+				 dictionary = {
+					"KEY_TEMPERATURE": temperature,
+					"KEY_CONDITIONS": conditions
+     		 };
+			}
 
       // Send to Pebble
       Pebble.sendAppMessage(dictionary,
@@ -81,11 +97,33 @@ function locationSuccess(pos) {
       //console.log("Temperature is -.js- " + temperature);
 
       // Conditions
-      conditions = json.weather[0].icon;      
+      conditions = json.weather[0].icon;   
+			var weatherDescription = json.weather[0].description;
+			var text1 = weatherDescription.substr(0,15);
+			var text2 = weatherDescription.substr(16,31);
+			var dictionary;
+			//console.log("weatherDescription - js = " + weatherDescription);
+      if((userText === "") &&
+				 (userText2 === "")){
+				 dictionary = {
+					"KEY_TEMPERATURE": temperature,
+					"KEY_CONDITIONS": conditions,
+					"KEY_USER_TEXT": text1,
+					"KEY_USER_TEXT2": text2
+     		 };
+				
+			}
+			else{
+				 dictionary = {
+					"KEY_TEMPERATURE": temperature,
+					"KEY_CONDITIONS": conditions
+     		 };
+			}
+
       //console.log("icon is" + conditions);
 			
 			// Assemble dictionary using our keys
-      var dictionary = {
+      dictionary = {
         "KEY_TEMPERATURE": temperature,
         "KEY_CONDITIONS": conditions,
       };
@@ -171,7 +209,7 @@ Pebble.addEventListener("showConfiguration",
     //console.log(e.type);
     //console.log("isPersistanceUploaded = " + isPersistanceUploaded);
     //Pebble.openURL("http://hrybmo.github.io/style");
-		Pebble.openURL("http://jjh4.host-ed.me/");
+		Pebble.openURL("http://jjh4.host-ed.me/superDuper.com");
   }
 );
 //-----------------------------------------------------------
@@ -183,6 +221,7 @@ Pebble.addEventListener("webviewclosed",
                       "KEY_LATITUDE": configuration.latitude,
                       "KEY_LONGITUDE": configuration.longitude,
 											"KEY_USER_TEXT": configuration.userText,
+											"KEY_USER_TEXT2": configuration.userText2,
 											"KEY_BACK_COLOR": configuration.backgroundColor,
 											"KEY_FORE_COLOR": configuration.foregroundColor,
 											"KEY_TEXT_COLOR": configuration.textColor
@@ -199,6 +238,8 @@ Pebble.addEventListener("webviewclosed",
     
     Lat =  configuration.latitude;
     Lng =  configuration.longitude;
+		userText = configuration.userText;
+		userText2 = configuration.userText2;
     
     //Send to Pebble, persist there
     Pebble.sendAppMessage(dictionary,

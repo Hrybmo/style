@@ -12,6 +12,7 @@
         "KEY_TEMP_UNITS": 4,
         "KEY_TEXT_COLOR": 13,
         "KEY_USER_TEXT": 5,
+        "KEY_USER_TEXT2": 14,
         "KEY_VERSION": 0,
         "KEY_WEATHER_MESSAGE": 9
     },

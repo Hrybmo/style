@@ -12,6 +12,7 @@
 #define KEY_BACK_COLOR 11
 #define KEY_FORE_COLOR 12
 #define KEY_TEXT_COLOR 13
+#define KEY_USER_TEXT2 14
 
 void CallBack_init(void);
 void CallBack_sendWeatherMessage(void);
@@ -23,6 +24,7 @@ int CallBack_getTemperatureUnits(void);
 uint8_t CallBack_getConditions(void);
 int CallBack_isInvertUiColor(void);
 void *CallBack_getUserTextPtr(void);
+void *CallBack_getUserText2Ptr(void);
 uint32_t CallBack_getForegroundColor(void);
 uint32_t CallBack_getBackgroundColor(void);
 uint32_t CallBack_getTextColor(void);

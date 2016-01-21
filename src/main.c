@@ -22,6 +22,7 @@ static char day_text[] = "tue";
 static char date_text[] = "12-30-2015";
 static char batt_text[] = "100";
 static char *userTextPtr = 0;
+static char *userText2Ptr = 0;
 static BatteryChargeState charge_state;
 static int temperatureUnits;
 static int temperature;
@@ -50,6 +51,7 @@ void handle_init(void) {
 	ui_init_weather();
   CallBack_init();
 	userTextPtr = CallBack_getUserTextPtr();
+	userText2Ptr = CallBack_getUserText2Ptr();
 	ui_setTempTo("");
 	ui_setDayTo("");
 	ui_setDateTo("");
@@ -183,6 +185,7 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 	else{
 		secondsTickTimer = 0;
 		ui_setUserTextTo(userTextPtr);
+		ui_setUserText2To(userText2Ptr);
 	}
 	
   //is weather update time?

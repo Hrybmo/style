@@ -14,6 +14,7 @@ void ui_setDateTo(char *buff);
 void ui_setTimeTo(char *buff);
 void ui_setBattTo(char *buff);
 void ui_setUserTextTo(char *buff);
+void ui_setUserText2To(char *buff);
 void ui_setWeatherTo(uint8_t id);
 void ui_setAllColors(uint32_t background, uint32_t foreground, uint32_t text);
 void ui_fitToRound();
