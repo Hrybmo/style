@@ -111,7 +111,6 @@ function locationSuccess(pos) {
 					"KEY_USER_TEXT": text1,
 					"KEY_USER_TEXT2": text2
      		 };
-				
 			}
 			else{
 				 dictionary = {
@@ -119,14 +118,6 @@ function locationSuccess(pos) {
 					"KEY_CONDITIONS": conditions
      		 };
 			}
-
-      //console.log("icon is" + conditions);
-			
-			// Assemble dictionary using our keys
-      dictionary = {
-        "KEY_TEMPERATURE": temperature,
-        "KEY_CONDITIONS": conditions,
-      };
 
       // Send to Pebble
       Pebble.sendAppMessage(dictionary,

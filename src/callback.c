@@ -1,5 +1,6 @@
 #include <pebble.h>
 #include "callback.h"
+#include "Handler.h"
 #include <ctype.h>
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context);
@@ -341,4 +342,5 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     // Look for next item
     t = dict_read_next(iterator);
   }
+	Handler_setEvent();
 } 

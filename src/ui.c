@@ -15,7 +15,6 @@ GBitmap *bitmapArray[8]; //pointer array for color help
 static Window *s_window;
 static GBitmap *s_res_image_bg1;
 static GFont s_res_bitham_42_bold;
-static GFont s_res_gothic_24_bold;
 static GFont s_res_gothic_28_bold;
 static GBitmap *s_res_image_01;
 static GFont s_res_gothic_18_bold;
@@ -31,10 +30,9 @@ static TextLayer *s_textlayer_bot_user2;
 
 void initialise_ui(void) {
   s_window = window_create();
-
+  
   s_res_image_bg1 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BG1);
   s_res_bitham_42_bold = fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD);
-  s_res_gothic_24_bold = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
   s_res_gothic_28_bold = fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD);
   s_res_image_01 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_01);
   s_res_gothic_18_bold = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
@@ -52,18 +50,18 @@ void initialise_ui(void) {
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_time);
   
   // s_textlayer_batt
-  s_textlayer_batt = text_layer_create(GRect(57, 85, 27, 15));
+  s_textlayer_batt = text_layer_create(GRect(109, 88, 27, 15));
   text_layer_set_background_color(s_textlayer_batt, GColorClear);
   text_layer_set_text(s_textlayer_batt, "100");
   text_layer_set_text_alignment(s_textlayer_batt, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_batt);
   
   // s_textlayer_date
-  s_textlayer_date = text_layer_create(GRect(0, 63, 144, 28));
+  s_textlayer_date = text_layer_create(GRect(0, 62, 144, 28));
   text_layer_set_background_color(s_textlayer_date, GColorClear);
-  text_layer_set_text(s_textlayer_date, "01-01-2015");
+  text_layer_set_text(s_textlayer_date, "01-01-15");
   text_layer_set_text_alignment(s_textlayer_date, GTextAlignmentCenter);
-  text_layer_set_font(s_textlayer_date, s_res_gothic_24_bold);
+  text_layer_set_font(s_textlayer_date, s_res_gothic_28_bold);
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_date);
   
   // s_textlayer_day
@@ -90,7 +88,6 @@ void initialise_ui(void) {
   // s_textlayer_bot_user
   s_textlayer_bot_user = text_layer_create(GRect(0, 97, 144, 21));
   text_layer_set_background_color(s_textlayer_bot_user, GColorClear);
-  text_layer_set_text(s_textlayer_bot_user, "ggg");
   text_layer_set_text_alignment(s_textlayer_bot_user, GTextAlignmentCenter);
   text_layer_set_font(s_textlayer_bot_user, s_res_gothic_18_bold);
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_bot_user);
@@ -98,7 +95,6 @@ void initialise_ui(void) {
   // s_textlayer_bot_user2
   s_textlayer_bot_user2 = text_layer_create(GRect(0, 115, 144, 21));
   text_layer_set_background_color(s_textlayer_bot_user2, GColorClear);
-  text_layer_set_text(s_textlayer_bot_user2, "ggTT");
   text_layer_set_text_alignment(s_textlayer_bot_user2, GTextAlignmentCenter);
   text_layer_set_font(s_textlayer_bot_user2, s_res_gothic_18_bold);
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_bot_user2);
