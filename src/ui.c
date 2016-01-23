@@ -27,6 +27,7 @@ static TextLayer *s_textlayer_w_temp;
 static BitmapLayer *s_bitmaplayer_weather_01;
 static TextLayer *s_textlayer_bot_user;
 static TextLayer *s_textlayer_bot_user2;
+static TextLayer *s_textlayer_stopwatch;
 
 void initialise_ui(void) {
   s_window = window_create();
@@ -88,6 +89,7 @@ void initialise_ui(void) {
   // s_textlayer_bot_user
   s_textlayer_bot_user = text_layer_create(GRect(0, 97, 144, 21));
   text_layer_set_background_color(s_textlayer_bot_user, GColorClear);
+  text_layer_set_text(s_textlayer_bot_user, "Text layer");
   text_layer_set_text_alignment(s_textlayer_bot_user, GTextAlignmentCenter);
   text_layer_set_font(s_textlayer_bot_user, s_res_gothic_18_bold);
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_bot_user);
@@ -95,9 +97,18 @@ void initialise_ui(void) {
   // s_textlayer_bot_user2
   s_textlayer_bot_user2 = text_layer_create(GRect(0, 115, 144, 21));
   text_layer_set_background_color(s_textlayer_bot_user2, GColorClear);
+  text_layer_set_text(s_textlayer_bot_user2, "Text layer");
   text_layer_set_text_alignment(s_textlayer_bot_user2, GTextAlignmentCenter);
   text_layer_set_font(s_textlayer_bot_user2, s_res_gothic_18_bold);
   layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_bot_user2);
+  
+  // s_textlayer_stopwatch
+  s_textlayer_stopwatch = text_layer_create(GRect(0, 101, 144, 30));
+  text_layer_set_background_color(s_textlayer_stopwatch, GColorClear);
+  text_layer_set_text(s_textlayer_stopwatch, "Text layer");
+  text_layer_set_text_alignment(s_textlayer_stopwatch, GTextAlignmentCenter);
+  text_layer_set_font(s_textlayer_stopwatch, s_res_gothic_28_bold);
+  layer_add_child(window_get_root_layer(s_window), (Layer *)s_textlayer_stopwatch);
 }
 
 void destroy_ui(void) {
@@ -111,6 +122,7 @@ void destroy_ui(void) {
   bitmap_layer_destroy(s_bitmaplayer_weather_01);
   text_layer_destroy(s_textlayer_bot_user);
   text_layer_destroy(s_textlayer_bot_user2);
+  text_layer_destroy(s_textlayer_stopwatch);
   gbitmap_destroy(s_res_image_bg1);
   gbitmap_destroy(s_res_image_01);
 }
@@ -151,6 +163,10 @@ void ui_setUserTextTo(char *buff){
 //-----------------------------------------------------------------
 void ui_setUserText2To(char *buff){
 	text_layer_set_text(s_textlayer_bot_user2,buff);
+}
+//-----------------------------------------------------------------
+void ui_setStopwatchTo(char *buff){
+	text_layer_set_text(s_textlayer_stopwatch,buff);
 }
 //-------------------------------------------------------
 void ui_init_weather(void){

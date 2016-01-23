@@ -37,7 +37,8 @@ void handle_init(void) {
 	ui_setTimeTo("");
 	ui_setBattTo("");
 	ui_setUserTextTo("");
-	
+	ui_setUserText2To("");
+	ui_setStopwatchTo("");
 	#ifdef PBL_ROUND
 	ui_fitToRound();
 	#endif

@@ -64,6 +64,7 @@ static void data_handler(AccelData *data, uint32_t num_samples) {
 				vibes_enqueue_custom_pattern(vibrationPattern1);
 				isTimerMode = false;
 				light_enable_interaction();
+				isEvent = true;
 				//APP_LOG(APP_LOG_LEVEL_INFO, "off");
 			}
 			else{
@@ -139,12 +140,15 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 		hours = secondsTickTimer / 3600;
 		snprintf(timerBuffer, sizeof(timerBuffer), "%02d:%02d:%02d", hours, minutes, seconds);
 		secondsTickTimer++;
-		ui_setUserTextTo(timerBuffer);
+		ui_setStopwatchTo(timerBuffer);
+		ui_setUserTextTo("");
+		ui_setUserText2To("");
 	}
 	else{
 		secondsTickTimer = 0;
 		ui_setUserTextTo(userTextPtr);
 		ui_setUserText2To(userText2Ptr);
+		ui_setStopwatchTo("");
 	}
 	
   //is weather update time?
