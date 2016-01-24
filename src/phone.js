@@ -1,4 +1,4 @@
-var isGps = 1;
+var gpsValue = 0;
 var Lat = "";
 var Lng = "";
 var temp_units = "";
@@ -25,7 +25,6 @@ var locationOptions = {
 function GetStaticWeather()
 {
   //console.log("getting static weather");
-  
   var url = "http://api.openweathermap.org/data/2.5/weather?lat=" +
       Lat + "&lon=" + Lng + "&appid=" + apiKey;
     // Send request to OpenWeatherMap
@@ -40,6 +39,28 @@ function locationSuccess(pos) {
 	//console.log(url);
   // Send request to OpenWeatherMap
   xhrRequest(url, 'GET', sendWeatherDataBack);      
+}
+//--------------------------------------------
+function locationSave(pos){
+	Lat = pos.coords.latitude;
+	Lng = pos.coords.longitude;
+	//console.log("lat = " + Lat);
+	//console.log("lng = " + Lng);
+  //console.log("its a " + typeof Lat);
+	
+	var dictionary = {"KEY_LATITUDE": String(Lat),
+										"KEY_LONGITUDE": String(Lng)};
+	//Send to Pebble, persist there
+     Pebble.sendAppMessage(dictionary,
+      function(e) {
+        //console.log("Sending locationSave data...");
+      },
+      function(e) {
+        //console.log("locationSave data failed!");
+      }
+    );
+	//console.log("location saved");
+	getWeather();
 }
 //-----------------------------------
 function sendWeatherDataBack(responseText){
@@ -102,7 +123,7 @@ function locationError(err) {
 }
 //------------------------------------------
 function getWeather() {
-  if(isGps == 1)
+  if(gpsValue === 0)
     {
         navigator.geolocation.getCurrentPosition(
         locationSuccess,
@@ -145,7 +166,7 @@ Pebble.addEventListener('appmessage',
      //console.log("KEY_PERSISTANT_MESSAGE = " + e.payload.KEY_PERSISTANT_MESSAGE);
      //console.log("KEY_WEATHER_MESSAGE = " + e.payload.KEY_WEATHER_MESSAGE);
      if(e.payload.KEY_PERSISTANT_MESSAGE == 1){
-       isGps = e.payload.KEY_IS_GPS;
+       gpsValue = e.payload.KEY_IS_GPS;
        //console.log("gps = " + isGps);
        Lat = e.payload.KEY_LATITUDE;
        Lng = e.payload.KEY_LONGITUDE;
@@ -163,8 +184,6 @@ Pebble.addEventListener('appmessage',
 Pebble.addEventListener("showConfiguration",
   function(e) {
     //console.log(e.type);
-    //console.log("isPersistanceUploaded = " + isPersistanceUploaded);
-    //Pebble.openURL("http://hrybmo.github.io/style");
 		Pebble.openURL("http://jjh4.host-ed.me/superDuper.com");
   }
 );
@@ -174,8 +193,6 @@ Pebble.addEventListener("webviewclosed",
     var configuration = JSON.parse(decodeURIComponent(e.response));
     var dictionary = {"KEY_TEMP_UNITS": configuration.tempUnits,
                       "KEY_IS_GPS" : configuration.isGPS,
-                      "KEY_LATITUDE": configuration.latitude,
-                      "KEY_LONGITUDE": configuration.longitude,
 											"KEY_USER_TEXT": configuration.userText,
 											"KEY_USER_TEXT2": configuration.userText2,
 											"KEY_BACK_COLOR": configuration.backgroundColor,
@@ -185,29 +202,27 @@ Pebble.addEventListener("webviewclosed",
     
     //console.log("Configuration window returned: " + JSON.stringify(configuration));
     //save locally too
-    if(configuration.isGPS == "GPS"){
-      isGps = 1;
-    }
-    else {
-      isGps = 0;
-    }
-    
-    Lat =  configuration.latitude;
-    Lng =  configuration.longitude;
 		userText = configuration.userText;
 		userText2 = configuration.userText2;
     
     //Send to Pebble, persist there
     Pebble.sendAppMessage(dictionary,
       function(e) {
-        console.log(e.type);
-        console.log("Sending configuration data...");
-        getWeather();
+        //console.log(e.type);
+        //console.log("Sending configuration data...");
       },
       function(e) {
-        console.log(e.type);
-        console.log("configuration feedback failed!");
+        //console.log(e.type);
+        //console.log("configuration feedback failed!");
       }
     );
+		gpsValue = configuration.isGPS;
+    if(gpsValue == 1){
+			//get a gps reading to save
+			navigator.geolocation.getCurrentPosition(locationSave,locationError,locationOptions);
+    }
+		else{
+			getWeather();
+		}
   }
 );

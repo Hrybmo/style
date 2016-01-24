@@ -19,3 +19,4 @@ void ui_setStopwatchTo(char *buff);
 void ui_setWeatherTo(uint8_t id);
 void ui_setAllColors(uint32_t background, uint32_t foreground, uint32_t text);
 void ui_fitToRound();
+void ui_isWeatherIconHidden(bool set);

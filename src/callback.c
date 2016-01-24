@@ -13,7 +13,7 @@ static void CallBack_refreshPersistance(void);
 static int temperatureUnits = 'F';
 static int temperature = 0;
 static int isWeatherDataAvailable = 0;
-static int isGPS = 1;
+static int gpsValue = 0;
 static char sLatitude[20] = "1";
 static char sLongitude[20] = "1";
 static char sVersion[] = "1";
@@ -78,7 +78,7 @@ void CallBack_sendPersistantMessage(void){
     app_message_outbox_begin(&iter);
     // Add a key-value pair
     dict_write_uint32(iter, KEY_PERSISTANT_MESSAGE, 1);
-    dict_write_uint32(iter, KEY_IS_GPS, isGPS);
+    dict_write_uint32(iter, KEY_IS_GPS, gpsValue);
     dict_write_cstring(iter, KEY_LATITUDE, sLatitude);
     dict_write_cstring(iter, KEY_LONGITUDE, sLongitude);
     dict_write_end(iter);
@@ -111,10 +111,10 @@ void CallBack_refreshPersistance(void)
   }
   
   if (persist_exists(KEY_IS_GPS)){
- 	 isGPS = persist_read_int(KEY_IS_GPS);
+ 	 gpsValue = persist_read_int(KEY_IS_GPS);
   }
   else{
-      persist_write_int(KEY_IS_GPS,isGPS);
+      persist_write_int(KEY_IS_GPS,gpsValue);
   }
   
   if (persist_exists(KEY_LATITUDE)){
@@ -297,27 +297,19 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
       break;
       
       case KEY_IS_GPS:
-      memcpy(incomming,(t->value->cstring),sizeof(incomming));
-      if(strcmp(incomming,"GPS") == 0){
-        //APP_LOG(APP_LOG_LEVEL_INFO,"KEY_IS_GPS persistance saved as 1");
-        persist_write_int(KEY_IS_GPS,1);
-        isGPS = 1;
-      }        
-      else{
-        persist_write_int(KEY_IS_GPS,0);
-        //APP_LOG(APP_LOG_LEVEL_INFO,"KEY_IS_GPS persistance saved as 0");
-        isGPS = 0;
-      }
+			gpsValue = (int) t->value->int32;
+      persist_write_int(KEY_IS_GPS,gpsValue); 
       break;
       
       case KEY_LATITUDE:
       memcpy(sLatitude,(t->value->cstring),(t->length));
-      //APP_LOG(APP_LOG_LEVEL_INFO, "lat = %s",sLatitude);
+      //APP_LOG(APP_LOG_LEVEL_INFO, "callback lat = %s",sLatitude);
       persist_write_string(KEY_LATITUDE,sLatitude);
       break;
       
       case KEY_LONGITUDE:
       memcpy(sLongitude,(t->value->cstring),(t->length));
+			//APP_LOG(APP_LOG_LEVEL_INFO, "callback lng = %s",sLongitude);
       persist_write_string(KEY_LONGITUDE,sLongitude);
       break;
 			

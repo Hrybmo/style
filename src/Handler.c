@@ -37,6 +37,8 @@ static void tap_handler(AccelAxisType axis, int32_t direction) {
 	#define TENMS_SAMPLES_FOR_GUESTURE 5
 	if(isSleeping){
 		isSleeping = false;
+		isEvent = true;
+		ui_isWeatherIconHidden(false);
 		tick_timer_service_subscribe(SECOND_UNIT , handle_tick);
 	}
 	else{
@@ -86,7 +88,7 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 	uint8_t seconds = 0;
 	uint8_t minutes = 0;
 	uint8_t hours = 0;
-	static int sleepModeBuffer[SLEEP_MODE_BUFFER_SIZE] = {0,-100,100};
+	static int sleepModeBuffer[SLEEP_MODE_BUFFER_SIZE] = {0,-100};
 	static uint8_t sleepModeBufferIndex = 0;
 	int accelMax = -10000;
 	int accelMin = 10000;
@@ -129,6 +131,9 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 			ui_setDayTo("");
 			ui_setDateTo("<>");
 			ui_setTempTo("");
+			ui_setUserText2To("");
+			ui_setBattTo("");
+			ui_isWeatherIconHidden(true);
 			return;
 		}
 	}

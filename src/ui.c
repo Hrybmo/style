@@ -362,5 +362,10 @@ void ui_fitToRound(){
 	frame = layer_get_frame(layer);
 	layer_set_frame(layer, roundOffset(frame));
 }
-									
+
+void ui_isWeatherIconHidden(bool set){
+	Layer *layer;
+	layer = bitmap_layer_get_layer(s_bitmaplayer_weather_01);
+	layer_set_hidden(layer, set);
+}
 							
