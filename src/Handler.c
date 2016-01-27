@@ -150,7 +150,7 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 		ui_setUserText2To("");
 	}
 	else{
-		secondsTickTimer = 3590;
+		secondsTickTimer = 0;
 		ui_setUserTextTo(userTextPtr);
 		ui_setUserText2To(userText2Ptr);
 		ui_setStopwatchTo("");
