@@ -56,7 +56,7 @@ function locationSave(pos){
         //console.log("Sending locationSave data...");
       },
       function(e) {
-        //console.log("locationSave data failed!");
+        console.log("locationSave data failed!");
       }
     );
 	//console.log("location saved");
@@ -80,12 +80,12 @@ function sendWeatherDataBack(responseText){
 			var text2 = "";
 			var text1 = "";
 			//if single line then keep at bottom
-			if(weatherDescription.length <= 15){
-				text2 = weatherDescription.substr(0,15);
+			if(weatherDescription.length <= 16){
+				text2 = weatherDescription.substr(0,16);
 				text1 = weatherDescription.substr(16,31);
 			}
 			else{
-				text1 = weatherDescription.substr(0,15);
+				text1 = weatherDescription.substr(0,16);
 				text2 = weatherDescription.substr(16,31);
 			}
 			
@@ -113,7 +113,7 @@ function sendWeatherDataBack(responseText){
           //console.log("Weather info sent to Pebble successfully!");
         },
         function(e) {
-          //console.log("Error sending weather info to Pebble!");
+          console.log("Error sending weather info to Pebble!");
         }
       );
 }
@@ -135,6 +135,16 @@ function getWeather() {
       GetStaticWeather();
     }
 }
+//--------------------------------
+function tryReadyAgain() {
+	  var dictionary = {
+        "KEY_JS_READY": 1
+    };
+	 Pebble.sendAppMessage(dictionary,null,
+        function(e) {
+          console.log(e.type);
+				});
+}
 //--------------------------------------------------------
 // Listen for when the watchface is opened
  
@@ -147,17 +157,14 @@ Pebble.addEventListener('ready',
       };
 
       // Send to Pebble
-      Pebble.sendAppMessage(dictionary,
-      function(e) {
-          //console.log(e.type);
-          //console.log("JS ready sent to Pebble successfully!");
-        },
+      Pebble.sendAppMessage(dictionary,null,
         function(e) {
-          //console.log(e.type);
-          //console.log("Error sending JS ready to Pebble!");
-        }
-      );
-  });
+          console.log(e.type);
+					setTimeout(tryReadyAgain,1000);
+				}
+     	);
+ }
+);
 //-----------------------------------------------------
 // weather or persistance data
 Pebble.addEventListener('appmessage',
@@ -213,7 +220,7 @@ Pebble.addEventListener("webviewclosed",
       },
       function(e) {
         //console.log(e.type);
-        //console.log("configuration feedback failed!");
+        console.log("configuration feedback failed!");
       }
     );
 		gpsValue = configuration.isGPS;

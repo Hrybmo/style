@@ -1,7 +1,6 @@
 #include <pebble.h>
 #include "callback.h"
 #include "Handler.h"
-#include "ui.h"
 #include <ctype.h>
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context);
@@ -281,7 +280,6 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 			else if(memcmp("50",incomming,2) == 0){
 				conditions = 50;
 			}
-			ui_isWeatherIconHidden(false);
 			//APP_LOG(APP_LOG_LEVEL_INFO, "conditions - callback = %d",conditions);
       break;
 

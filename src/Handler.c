@@ -141,7 +141,7 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 	//stopwatch mode check
 	if(isTimerMode){
 		seconds = secondsTickTimer % 60;
-		minutes = secondsTickTimer / 60;
+		minutes = (secondsTickTimer % 3600) / 60;
 		hours = secondsTickTimer / 3600;
 		snprintf(timerBuffer, sizeof(timerBuffer), "%02d:%02d:%02d", hours, minutes, seconds);
 		secondsTickTimer++;
@@ -150,7 +150,7 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 		ui_setUserText2To("");
 	}
 	else{
-		secondsTickTimer = 0;
+		secondsTickTimer = 3590;
 		ui_setUserTextTo(userTextPtr);
 		ui_setUserText2To(userText2Ptr);
 		ui_setStopwatchTo("");
@@ -202,6 +202,7 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 			snprintf(temperature_buffer, sizeof(temperature_buffer), "%d°C", temperature);
 		}
 		ui_setTempTo(temperature_buffer);
+		ui_isWeatherIconHidden(false);
 	}
 	
 	ui_setWeatherTo(CallBack_getConditions());
