@@ -1,0 +1,101 @@
+{
+    "author": "john.hryb.4@gmail.com",
+    "dependencies": {},
+    "keywords": [],
+    "name": "styles",
+    "pebble": {
+        "capabilities": [
+            "location",
+            "configurable"
+        ],
+        "displayName": "Styles",
+        "enableMultiJS": false,
+        "messageKeys": {
+            "KEY_BACK_COLOR": 11,
+            "KEY_CONDITIONS": 3,
+            "KEY_FORE_COLOR": 12,
+            "KEY_IS_GPS": 6,
+            "KEY_JS_READY": 1,
+            "KEY_LATITUDE": 7,
+            "KEY_LONGITUDE": 8,
+            "KEY_PERSISTANT_MESSAGE": 10,
+            "KEY_TEMPERATURE": 2,
+            "KEY_TEMP_UNITS": 4,
+            "KEY_TEXT_COLOR": 13,
+            "KEY_USER_TEXT": 5,
+            "KEY_USER_TEXT2": 14,
+            "KEY_VERSION": 0,
+            "KEY_WEATHER_MESSAGE": 9
+        },
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "images/50.png",
+                    "name": "IMAGE_50",
+                    "targetPlatforms": null,
+                    "type": "png"
+                },
+                {
+                    "file": "images/13.png",
+                    "name": "IMAGE_13",
+                    "targetPlatforms": null,
+                    "type": "png"
+                },
+                {
+                    "file": "images/11.png",
+                    "name": "IMAGE_11",
+                    "targetPlatforms": null,
+                    "type": "png"
+                },
+                {
+                    "file": "images/10.png",
+                    "name": "IMAGE_10",
+                    "targetPlatforms": null,
+                    "type": "png"
+                },
+                {
+                    "file": "images/09.png",
+                    "name": "IMAGE_09",
+                    "targetPlatforms": null,
+                    "type": "png"
+                },
+                {
+                    "file": "images/03_04.png",
+                    "name": "IMAGE_03_04",
+                    "targetPlatforms": null,
+                    "type": "png"
+                },
+                {
+                    "file": "images/02.png",
+                    "name": "IMAGE_02",
+                    "targetPlatforms": null,
+                    "type": "png"
+                },
+                {
+                    "file": "images/01.png",
+                    "name": "IMAGE_01",
+                    "targetPlatforms": null,
+                    "type": "png"
+                },
+                {
+                    "file": "images/ui_1.png",
+                    "name": "IMAGE_BG1",
+                    "targetPlatforms": null,
+                    "type": "png"
+                }
+            ]
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "aplite",
+            "basalt",
+            "chalk"
+        ],
+        "uuid": "0712953f-21f5-4a48-9c64-53e3728473df",
+        "watchapp": {
+            "watchface": true
+        }
+    },
+    "version": "1.2.0"
+}

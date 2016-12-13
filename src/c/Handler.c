@@ -38,6 +38,7 @@ static void tap_handler(AccelAxisType axis, int32_t direction) {
 	if(isSleeping){
 		isSleeping = false;
 		isEvent = true;
+		CallBack_sendWeatherMessage();
 		ui_isWeatherIconHidden(false);
 		tick_timer_service_subscribe(SECOND_UNIT , handle_tick);
 	}
@@ -93,6 +94,9 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 	int accelMax = -10000;
 	int accelMin = 10000;
 	AccelData accelData;
+	//weather
+	static bool isFirstCall = true;
+	static int updateMinute = 0;
 	
 	//save battery by exiting right away if not needed
 	//changing from second to minute is not working right now on the sdk
@@ -134,6 +138,9 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 			ui_setUserText2To("");
 			ui_setBattTo("");
 			ui_isWeatherIconHidden(true);
+			for(uint16_t a = 0;a < SLEEP_MODE_BUFFER_SIZE;a++){
+				sleepModeBuffer[a] =  rand();
+			}
 			return;
 		}
 	}
@@ -156,8 +163,14 @@ void handle_tick(struct tm* tick_time, TimeUnits units_changed) {
 		ui_setStopwatchTo("");
 	}
 	
+	if(isFirstCall == true){
+		isFirstCall = false;
+		updateMinute = tick_time->tm_min;
+		APP_LOG(APP_LOG_LEVEL_INFO, "update time set to %i", updateMinute);
+	}
+	
   //is weather update time?
-  if((tick_time->tm_min == 0) && (tick_time->tm_sec == 0)) {
+  if((tick_time->tm_min == updateMinute) && (tick_time->tm_sec == 0)) {
     CallBack_sendWeatherMessage();
   }
   
